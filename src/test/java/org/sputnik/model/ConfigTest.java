@@ -1,0 +1,32 @@
+package org.sputnik.model;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import org.junit.Before;
+import org.junit.Test;
+import org.sputnik.config.SputnikConfig;
+import org.sputnik.model.config.DataSerie;
+import org.sputnik.model.config.DataSerieType;
+import org.sputnik.model.config.Graph;
+
+import static org.junit.Assert.assertEquals;
+
+public class ConfigTest {
+    ObjectMapper objectMapper;
+
+    @Before
+    public void setUp() throws Exception {
+        objectMapper = new SputnikConfig().objectMapper();
+    }
+
+    @Test
+    public void test_json() throws Exception {
+        Graph graph = new Graph();
+        DataSerie dataSerie = new DataSerie();
+        dataSerie.setType(DataSerieType.COUNTER);
+        dataSerie.setPath("a.b");
+        graph.getDataSeries().add(dataSerie);
+        assertEquals("{\"dataSeries\":[{\"path\":\"a.b\",\"type\":\"COUNTER\"}]}", objectMapper.writeValueAsString(graph));
+    }
+}
