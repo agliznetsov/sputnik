@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.sputnik</groupId>
-	<artifactId>sputnik-core</artifactId>
+	<artifactId>sputnik-server</artifactId>
 	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
@@ -32,6 +32,11 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.1</version>
 		</dependency>
 
 		<dependency>

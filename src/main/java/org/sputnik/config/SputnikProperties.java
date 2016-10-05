@@ -11,4 +11,19 @@ import java.io.File;
 @ConfigurationProperties(prefix = "sputnik")
 public class SputnikProperties {
     File homeDirectory;
+
+    /**
+     * Data collection rate, sec
+     */
+    int dataRate = 60;
+
+    int httpTimeout = 5000;
+
+    int scheduleThreads = 1;
+
+    int executeThreads = 5;
+
+    int archiveRows = 1000;
+
+    int days = 7;
 }

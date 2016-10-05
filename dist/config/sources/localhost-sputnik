@@ -1,0 +1,6 @@
+{
+  "host": "localhost",
+  "name": "sputnik-server",
+  "url": "http://localhost:8080/metrics",
+  "dataProfileName": "java"
+}

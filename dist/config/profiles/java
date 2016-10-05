@@ -1,0 +1,117 @@
+{
+  "name": "java",
+  "graphs": [
+    {
+      "name": "heap",
+      "description": "Heap Memory, bytes",
+      "dataSeries": [
+        {
+          "name": "heap.committed",
+          "description": "The amount of heap memory in bytes that is committed for the JVM to use.",
+          "drawType": "AREA",
+          "color": "orange",
+          "multiplier": 1024
+        },
+        {
+          "name": "heap.used",
+          "description": "The amount of used heap memory.",
+          "drawType": "AREA",
+          "color": "blue",
+          "multiplier": 1024
+        }
+      ]
+    },
+    {
+      "name": "nonheap",
+      "description": "Non-heap Memory, bytes",
+      "dataSeries": [
+        {
+          "name": "nonheap.committed",
+          "description": "The amount of non-heap memory in bytes that is committed for the JVM to use.",
+          "drawType": "AREA",
+          "color": "orange",
+          "multiplier": 1024
+        },
+        {
+          "name": "nonheap.used",
+          "description": "The amount of used non-heap memory.",
+          "drawType": "AREA",
+          "color": "blue",
+          "multiplier": 1024
+        }
+      ]
+    },
+    {
+      "name": "cpu",
+      "description": "CPU Usage, %",
+      "dataSeries": [
+        {
+          "name": "cpu.system",
+          "description": "The 'recent cpu usage' for the whole system.",
+          "drawType": "LINE",
+          "color": "orange",
+          "multiplier": 100,
+          "min": 0,
+          "max": 100
+        },
+        {
+          "name": "cpu.process",
+          "description": "The 'recent cpu usage' for the JVM process.",
+          "drawType": "LINE",
+          "color": "blue",
+          "multiplier": 100,
+          "min": 0,
+          "max": 100
+        }
+      ]
+    },
+    {
+      "name": "thread",
+      "description": "Threads",
+      "dataSeries": [
+        {
+          "name": "threads",
+          "description": "The number of live threads including both daemon and non-daemon threads.",
+          "drawType": "AREA",
+          "color": "orange"
+        },
+        {
+          "name": "threads.daemon",
+          "description": "The number of live daemon threads.",
+          "drawType": "AREA",
+          "color": "blue"
+        }
+      ]
+    },
+    {
+      "name": "gc",
+      "description": "GC, ms/sec",
+      "dataSeries": [
+        {
+          "name": "gc.time",
+          "serieType": "DERIVE",
+          "pattern": "gc(.+?)time",
+          "aggregateFunction": "SUM",
+          "description": "The average collection elapsed time in milliseconds per second.",
+          "drawType": "LINE",
+          "color": "blue"
+        }
+      ]
+    },
+    {
+      "name": "request",
+      "description": "HTTP Requests, req/sec",
+      "dataSeries": [
+        {
+          "name": "request.counter",
+          "serieType": "DERIVE",
+          "pattern": "counter.status(.+?)",
+          "aggregateFunction": "SUM",
+          "description": "The number of incoming HTTP requests per second.",
+          "drawType": "LINE",
+          "color": "blue"
+        }
+      ]
+    }
+  ]
+}

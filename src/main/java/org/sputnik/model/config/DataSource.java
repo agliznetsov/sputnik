@@ -9,6 +9,8 @@ import javax.validation.constraints.NotNull;
 @Data
 public class DataSource {
     @NotNull
+    String host;
+    @NotNull
     String name;
     String url;
     DataFormat dataFormat;

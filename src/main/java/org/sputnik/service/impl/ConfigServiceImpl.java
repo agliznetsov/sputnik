@@ -3,12 +3,10 @@ package org.sputnik.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.sputnik.config.SputnikProperties;
-import org.sputnik.context.SmartLifecycleBean;
 import org.sputnik.model.config.DataProfile;
 import org.sputnik.model.config.DataSource;
 import org.sputnik.service.ConfigService;
@@ -17,16 +15,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @Service
-public class ConfigServiceImpl extends SmartLifecycleBean implements ConfigService {
+public class ConfigServiceImpl implements ConfigService {
 
-    private static final String DATA_PROFILES_DIR = "config/profiles";
-    private static final String DATA_SOURCES_DIR = "config/sources";
+    private static final String PROFILES_DIR = "config/profiles";
+    private static final String SOURCES_DIR = "config/sources";
+    private static final String DATA_DIR = "data";
 
     @Autowired
     SputnikProperties sputnikProperties;
@@ -39,8 +36,8 @@ public class ConfigServiceImpl extends SmartLifecycleBean implements ConfigServi
     @Override
     public synchronized void refresh() {
         log.info("Reading configuration from: {}", sputnikProperties.getHomeDirectory());
-        dataProfiles = readFiles(DATA_PROFILES_DIR, DataProfile.class);
-        dataSources = readFiles(DATA_SOURCES_DIR, DataSource.class);
+        dataProfiles = readFiles(PROFILES_DIR, DataProfile.class);
+        dataSources = readFiles(SOURCES_DIR, DataSource.class);
         dataSources.values().forEach(this::resolveProfile);
     }
 
@@ -56,7 +53,7 @@ public class ConfigServiceImpl extends SmartLifecycleBean implements ConfigServi
 
     @Override
     public void saveDataProfile(DataProfile dataProfile) {
-        write(DATA_PROFILES_DIR, dataProfile.getName(), dataProfile);
+        write(PROFILES_DIR, dataProfile.getName(), dataProfile);
         dataProfiles.put(dataProfile.getName(), dataProfile);
     }
 
@@ -73,8 +70,13 @@ public class ConfigServiceImpl extends SmartLifecycleBean implements ConfigServi
     @Override
     public void saveDataSource(DataSource dataSource) {
         resolveProfile(dataSource);
-        write(DATA_SOURCES_DIR, dataSource.getName(), dataSource);
+        write(SOURCES_DIR, dataSource.getName(), dataSource);
         dataSources.put(dataSource.getName(), dataSource);
+    }
+
+    @Override
+    public File getDataFile(DataSource dataSource) {
+        return new File(sputnikProperties.getHomeDirectory(), DATA_DIR + "/" + dataSource.getHost() + "/" + dataSource.getName());
     }
 
 //    private //
@@ -118,13 +120,4 @@ public class ConfigServiceImpl extends SmartLifecycleBean implements ConfigServi
         objectMapper.writeValue(new File(new File(sputnikProperties.getHomeDirectory(), dir), name), object);
     }
 
-    @Override
-    protected void doStart() {
-        refresh();
-    }
-
-    @Override
-    protected void doStop() {
-
-    }
 }
