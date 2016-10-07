@@ -15,6 +15,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
+import org.sputnik.context.Launcher;
 
 import java.util.ArrayList;
 
@@ -58,7 +59,7 @@ public class SputnikConfig {
     @Bean
     public TaskScheduler taskScheduler(SputnikProperties properties){
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-        scheduler.setPoolSize(properties.scheduleThreads);
+        scheduler.setPoolSize(1);
         scheduler.setThreadNamePrefix("task-scheduler-");
         return scheduler;
     }
@@ -66,10 +67,15 @@ public class SputnikConfig {
     @Bean
     public TaskExecutor taskExecutor(SputnikProperties properties) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(properties.executeThreads);
-        executor.setMaxPoolSize(properties.executeThreads);
+        executor.setCorePoolSize(properties.collectThreads);
+        executor.setMaxPoolSize(properties.collectThreads);
         executor.setThreadNamePrefix("task-executor-");
         return executor;
+    }
+
+    @Bean
+    public Launcher launcher() {
+        return new Launcher();
     }
 
 }

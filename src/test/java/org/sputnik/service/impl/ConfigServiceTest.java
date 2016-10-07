@@ -1,18 +1,13 @@
 package org.sputnik.service.impl;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.sputnik.SputnikApplicationTests;
-import org.sputnik.config.SputnikProperties;
+import org.sputnik.config.SputnikApplicationTests;
 import org.sputnik.model.config.DataProfile;
 import org.sputnik.model.config.DataSource;
 import org.sputnik.service.ConfigService;
-
-import java.io.File;
 
 import static org.junit.Assert.assertEquals;
 

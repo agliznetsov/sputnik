@@ -5,11 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.DsType;
 import org.rrd4j.core.DsDef;
+import org.rrd4j.core.FetchData;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDef;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.sputnik.config.SputnikProperties;
+import org.sputnik.model.DBDataChunk;
 import org.sputnik.model.config.DataSerie;
 import org.sputnik.model.config.DataSource;
 import org.sputnik.model.config.Graph;
@@ -40,6 +42,7 @@ public class DBServiceImpl implements DBService {
         log.info("Creating new DB: {}", dataFile);
         RrdDef rrdDef = new RrdDef(dataFile.getPath());
         rrdDef.setStartTime(0);
+        rrdDef.setStep(sputnikProperties.getDataRate());
         Set<String> dsNames = new HashSet<>();
         for (Graph g : dataSource.getDataProfile().getGraphs()) {
             for (DataSerie serie : g.getDataSeries()) {
@@ -57,7 +60,7 @@ public class DBServiceImpl implements DBService {
 
     private void addDataSource(RrdDef rrdDef, DataSerie serie) {
         DsType dsType = DsType.valueOf(serie.getSerieType().name());
-        rrdDef.addDatasource(serie.getName(), dsType, sputnikProperties.getDataRate() * 5, 0, Double.NaN);
+        rrdDef.addDatasource(serie.getName(), dsType, sputnikProperties.getDataRate() * 3, Double.NaN, Double.NaN);
     }
 
     @Override
@@ -76,6 +79,25 @@ public class DBServiceImpl implements DBService {
             if (!missing.isEmpty()) {
                 updateDB(dataFile, missing);
             }
+        }
+    }
+
+    @Override
+    @SneakyThrows
+    public DBDataChunk fetchData(File dataFile, Long from, Long to) {
+        RrdDb db = new RrdDb(dataFile.getPath());
+        try {
+            db.getHeader().getLastUpdateTime();
+            FetchData fetchData = db.createFetchRequest(ConsolFun.AVERAGE, from, to).fetchData();
+            DBDataChunk res = new DBDataChunk();
+            res.lastUpdate = db.getLastUpdateTime();
+            res.dsNames = fetchData.getDsNames();
+            res.arcStep = fetchData.getArcStep();
+            res.timestamps = fetchData.getTimestamps();
+            res.values = fetchData.getValues();
+            return res;
+        } finally {
+            db.close();
         }
     }
 
@@ -118,7 +140,7 @@ public class DBServiceImpl implements DBService {
     private void addArchives(RrdDef rrdDef, ConsolFun... functions) {
         int rows = sputnikProperties.getArchiveRows();
         for (ConsolFun fun : functions) {
-            rrdDef.addArchive(fun, 0.5, 1, (DAY * sputnikProperties.getDays()) / sputnikProperties.getDataRate());
+            rrdDef.addArchive(fun, 0.5, 1, (DAY * sputnikProperties.getArchiveDays()) / sputnikProperties.getDataRate());
             rrdDef.addArchive(fun, 0.5, WEEK / sputnikProperties.getDataRate() / rows, rows);
             rrdDef.addArchive(fun, 0.5, MONTH / sputnikProperties.getDataRate() / rows, rows);
             rrdDef.addArchive(fun, 0.5, YEAR / sputnikProperties.getDataRate() / rows, rows);

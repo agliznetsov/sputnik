@@ -19,11 +19,17 @@ public class SputnikProperties {
 
     int httpTimeout = 5000;
 
-    int scheduleThreads = 1;
-
-    int executeThreads = 5;
+    int collectThreads = 5;
 
     int archiveRows = 1000;
 
-    int days = 7;
+    int archiveDays = 7;
+
+    public SputnikProperties() {
+        String home = System.getProperty("SPUTNIK_HOME");
+        if (home == null || home.isEmpty()) {
+            home = System.getProperty("user.dir");
+        }
+        homeDirectory = new File(home);
+    }
 }
