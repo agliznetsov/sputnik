@@ -106,6 +106,16 @@ module.exports = function (grunt) {
                         dest: 'dist'
                     }
                 ]
+            },
+            static: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'dist',
+                        src: '{,*/}*.*',
+                        dest: '../src/main/resources/static/'
+                    }
+                ]
             }
         }
 
@@ -116,12 +126,13 @@ module.exports = function (grunt) {
         'useminPrepare',
         'ngtemplates',
         'concat',
-        'copy',
+        'copy:dist',
         'usemin'
     ]);
 
     grunt.registerTask('default', [
-        'build'
+        'build',
+        'copy:static'
     ]);
 
 };
