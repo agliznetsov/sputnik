@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sputnik</title>
+    <link rel="icon" type="image/png" href="images/sputnik-32.png" sizes="32x32">
+
+
+    <!-- build:css(app) styles/vendor.css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <!-- endbuild -->
+
+    <!-- build:css(app) styles/app.css -->
+    <link rel="stylesheet" href="components/main/main.css">
+    <link rel="stylesheet" href="components/home/home.css">
+    <!-- endbuild -->
+
+    <!-- build:js(app) scripts/vendor.js -->
+    <script src="bower_components/moment/min/moment-with-locales.min.js"></script>
+    <script src="bower_components/lodash/dist/lodash.min.js"></script>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/angular-route/angular-route.min.js"></script>
+    <script src="bower_components/ngstorage/ngStorage.min.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+    <script src="bower_components/chart.js/dist/Chart.min.js"></script>
+    <!-- endbuild -->
+
+    <!-- build:js(app) scripts/app.js -->
+    <script src="components/main/app.js"></script>
+    <script src="components/main/main.js"></script>
+    <script src="components/services/httpUtils.js"></script>
+    <script src="components/home/home.js"></script>
+    <script src="components/report/report.js"></script>
+    <!--<script src="../.tmp/templateCache.js"></script>-->
+    <!-- endbuild -->
+
+</head>
+<body ng-app="sputnik" ng-cloak>
+
+<div data-ng-controller="MainController">
+
+    <nav class="navbar navbar-default navbar-static-top">
+        <div>
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#"><img src="images/sputnik-logo.png"></a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li data-ng-class="{active: isActive('/'+menuItem.url)}" data-ng-repeat="menuItem in menu.left">
+                        <a ng-href="{{getUrl(menuItem)}}">
+                            <i class="fa fa-lg" data-ng-class="menuItem.iconClass"></i>
+                            <span class="li-text">{{menuItem.name}}</span>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li data-ng-class="{active: isActive('/'+menuItem.url)}" data-ng-repeat="menuItem in menu.right">
+                        <a ng-href="{{getUrl(menuItem)}}">
+                            <i class="fa fa-lg" data-ng-class="menuItem.iconClass"></i>
+                            <span class="li-text">{{menuItem.name}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div ng-view></div>
+
+</div>
+</body>
+</html>

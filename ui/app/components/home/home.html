@@ -1,0 +1,55 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-1 sidebar">
+            <div data-ng-repeat="host in model.hosts">
+                <h4 class="list-header">{{host.name}}</h4>
+                <ul class="nav nav-sidebar">
+                    <!--<li class="active"><a href="#">Overview</a></li>-->
+                    <li data-ng-repeat="source in host.sources"
+                        ng-class="{'active': host.name === model.hostName && source.name == model.sourceName }">
+                        <a href="#/home?src={{source.name}}@{{host.name}}">{{source.name}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-11 col-md-offset-1 main">
+            <div ng-hide="model.sourceName" class="center">No data source selected.</div>
+            <div ng-show="model.sourceName">
+
+                <div class="well well-sm clearfix">
+                    <div class="pull-left">{{model.sourceName}}@{{model.hostName}} last update: {{formatDate(model.data.lastUpdate)}}
+                    </div>
+                    <div class="pull-right">
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-default" ng-class="{'active': model.range === 'day'}" ng-click="selectRange('day')">Day</button>
+                            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false"  ng-class="{'active': isCustomRange()}" >
+                                Range
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li data-ng-repeat="range in model.ranges"><a href ng-click="selectRange(range.value)">{{range.name}}</a></li>
+                            </ul>
+                            <button class="btn btn-sm btn-default" ng-class="{'active': model.range === 'week'}"  ng-click="selectRange('week')">Week</button>
+                            <button class="btn btn-sm btn-default" ng-class="{'active': model.range === 'month'}"  ng-click="selectRange('month')">Month</button>
+                            <button class="btn btn-sm btn-default" ng-class="{'active': model.range === 'year'}"  ng-click="selectRange('year')">Year</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div ng-repeat="report in model.reports">
+                        <report ng-if="$index % 2 === 0" model="report"></report>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div ng-repeat="report in model.reports">
+                        <report ng-if="$index % 2 === 1" model="report"></report>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

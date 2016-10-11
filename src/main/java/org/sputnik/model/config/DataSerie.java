@@ -14,7 +14,7 @@ public class DataSerie {
     String description;
     DataSerieType serieType = DataSerieType.GAUGE;
     AggregateFunction aggregateFunction;
-    DrawType drawType = DrawType.LINE;
+    boolean fill;
     String color;
     Double multiplier;
     Double max;

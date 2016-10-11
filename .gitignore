@@ -10,4 +10,6 @@ target/
 *.ipr
 
 # UI
-ui/bower_components
+ui/app/bower_components
+ui/node_modules
+ui/.tmp

@@ -4,8 +4,10 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.DsType;
+import org.rrd4j.core.Archive;
 import org.rrd4j.core.DsDef;
 import org.rrd4j.core.FetchData;
+import org.rrd4j.core.FetchRequest;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDef;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.sputnik.model.config.Graph;
 import org.sputnik.service.DBService;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -84,11 +87,19 @@ public class DBServiceImpl implements DBService {
 
     @Override
     @SneakyThrows
-    public DBDataChunk fetchData(File dataFile, Long from, Long to) {
+    public DBDataChunk fetchData(File dataFile, long from, long to, Integer resolution) {
         RrdDb db = new RrdDb(dataFile.getPath());
         try {
-            db.getHeader().getLastUpdateTime();
-            FetchData fetchData = db.createFetchRequest(ConsolFun.AVERAGE, from, to).fetchData();
+            FetchData fetchData;
+            FetchRequest request = db.createFetchRequest(ConsolFun.AVERAGE, from, to, resolution == null ? 1 : resolution);
+            if (resolution != null) {
+                Archive archive = findArchive(db, resolution);
+                Method method = Archive.class.getDeclaredMethod("fetchData", FetchRequest.class);
+                method.setAccessible(true);
+                fetchData = (FetchData) method.invoke(archive, request);
+            } else {
+                fetchData = request.fetchData();
+            }
             DBDataChunk res = new DBDataChunk();
             res.lastUpdate = db.getLastUpdateTime();
             res.dsNames = fetchData.getDsNames();
@@ -99,6 +110,21 @@ public class DBServiceImpl implements DBService {
         } finally {
             db.close();
         }
+    }
+
+    @SneakyThrows
+    private Archive findArchive(RrdDb db, long resolution) {
+        long bestDelta = Long.MAX_VALUE;
+        Archive bestArchive = null;
+        for (int i = 0; i < db.getArcCount(); i++) {
+            Archive a = db.getArchive(i);
+            long delta = Math.abs(a.getArcStep() - resolution);
+            if (delta < bestDelta) {
+                bestDelta = delta;
+                bestArchive = a;
+            }
+        }
+        return bestArchive;
     }
 
     @SneakyThrows
@@ -128,7 +154,7 @@ public class DBServiceImpl implements DBService {
     }
 
     private File findBackupName(File src) {
-        for(int i=0; i<1000; i++) {
+        for (int i = 0; i < 1000; i++) {
             File newFile = new File(src + "." + i);
             if (!newFile.exists()) {
                 return newFile;

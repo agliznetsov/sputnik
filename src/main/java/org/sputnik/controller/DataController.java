@@ -33,7 +33,8 @@ public class DataController {
     @RequestMapping("/data/{host}/{name}")
     public DataReport getData(@PathVariable("host") String host, @PathVariable("name") String name,
                               @RequestParam(value = "start", required = false) Long from,
-                              @RequestParam(value = "end", required = false) Long to) {
+                              @RequestParam(value = "end", required = false) Long to,
+                              @RequestParam(value = "resolution", required = false) Integer resolution) {
         if (to == null) {
             to = now();
         }
@@ -44,7 +45,7 @@ public class DataController {
         Optional<DataSource> ds = configService.getDataSources().stream().filter(it -> it.getHost().equals(host) && it.getName().equals(name)).findFirst();
         if (ds.isPresent()) {
             File dataFile = configService.getDataFile(ds.get());
-            DBDataChunk chunk = dbService.fetchData(dataFile, from, to);
+            DBDataChunk chunk = dbService.fetchData(dataFile, from, to, resolution);
             DataReport report = new DataReport();
             report.setDataProfile(ds.get().getDataProfile());
             report.setFrom(from);

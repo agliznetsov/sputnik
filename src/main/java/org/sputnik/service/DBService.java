@@ -12,5 +12,5 @@ public interface DBService {
 
     void checkDB(File dataFile, DataSource dataSource);
 
-    DBDataChunk fetchData(File dataFile, Long from, Long to);
+    DBDataChunk fetchData(File dataFile, long from, long to, Integer resolution);
 }

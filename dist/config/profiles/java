@@ -8,16 +8,18 @@
         {
           "name": "heap.committed",
           "description": "The amount of heap memory in bytes that is committed for the JVM to use.",
-          "drawType": "AREA",
+          "fill": true,
           "color": "orange",
-          "multiplier": 1024
+          "multiplier": 1024,
+	      "min": 0
         },
         {
           "name": "heap.used",
           "description": "The amount of used heap memory.",
-          "drawType": "AREA",
+          "fill": true,
           "color": "blue",
-          "multiplier": 1024
+          "multiplier": 1024,
+	      "min": 0
         }
       ]
     },
@@ -28,16 +30,18 @@
         {
           "name": "nonheap.committed",
           "description": "The amount of non-heap memory in bytes that is committed for the JVM to use.",
-          "drawType": "AREA",
+          "fill": true,
           "color": "orange",
-          "multiplier": 1024
+          "multiplier": 1024,
+	      "min": 0
         },
         {
           "name": "nonheap.used",
           "description": "The amount of used non-heap memory.",
-          "drawType": "AREA",
+          "fill": true,
           "color": "blue",
-          "multiplier": 1024
+          "multiplier": 1024,
+	      "min": 0
         }
       ]
     },
@@ -48,7 +52,7 @@
         {
           "name": "cpu.system",
           "description": "The 'recent cpu usage' for the whole system.",
-          "drawType": "LINE",
+          "fill": false,
           "color": "orange",
           "multiplier": 100,
           "min": 0,
@@ -57,7 +61,7 @@
         {
           "name": "cpu.process",
           "description": "The 'recent cpu usage' for the JVM process.",
-          "drawType": "LINE",
+          "fill": false,
           "color": "blue",
           "multiplier": 100,
           "min": 0,
@@ -72,13 +76,13 @@
         {
           "name": "threads",
           "description": "The number of live threads including both daemon and non-daemon threads.",
-          "drawType": "AREA",
+          "fill": true,
           "color": "orange"
         },
         {
           "name": "threads.daemon",
           "description": "The number of live daemon threads.",
-          "drawType": "AREA",
+          "fill": true,
           "color": "blue"
         }
       ]
@@ -93,8 +97,9 @@
           "pattern": "gc(.+?)time",
           "aggregateFunction": "SUM",
           "description": "The average collection elapsed time in milliseconds per second.",
-          "drawType": "LINE",
-          "color": "blue"
+          "fill": false,
+          "color": "blue",
+          "min": 0
         }
       ]
     },
@@ -108,8 +113,9 @@
           "pattern": "counter.status(.+?)",
           "aggregateFunction": "SUM",
           "description": "The number of incoming HTTP requests per second.",
-          "drawType": "LINE",
-          "color": "blue"
+          "fill": false,
+          "color": "blue",
+          "min": 0
         }
       ]
     }
