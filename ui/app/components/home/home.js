@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('sputnik').controller('HomeController', function ($scope, $routeParams, $q, httpUtils) {
+angular.module('sputnik').controller('HomeController', function ($scope, $routeParams, $q, httpUtils, $timeout) {
 
     $scope.model = {
         hosts: [],
@@ -22,7 +22,12 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
         loadData()
     };
 
+    $scope.refresh = function () {
+        loadData();
+    };
+
     function init() {
+        $scope.$on("report-rendered", reportRendered);
         var requests = {
             dataSources: httpUtils.get("/dataSources"),
             properties: httpUtils.get("/properties")
@@ -93,11 +98,19 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
         console.info("data points #", data.timestamps.length);
         $scope.model.data = data;
         $scope.model.reports = [];
-        _.forEach(data.dataProfile.graphs, function (report) {
-            report.timestamps = data.timestamps;
-            report.values = data.values;
-            $scope.model.reports.push(report);
+        $scope.model.renderCount = data.dataProfile.graphs.length;
+        $timeout(function () {
+            _.forEach(data.dataProfile.graphs, function (report) {
+                report.timestamps = data.timestamps;
+                report.values = data.values;
+                $scope.model.reports.push(report);
+            });
         });
+    }
+
+    function reportRendered() {
+        $scope.model.renderCount--;
+        console.info("report-rendered", $scope.model.renderCount);
     }
 
     function toMoment(time) {

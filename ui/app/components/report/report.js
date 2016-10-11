@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('sputnik').directive('report', function () {
+angular.module('sputnik').directive('report', function ($rootScope, $timeout) {
     return {
         restrict: 'E',
         template: '<canvas class="report" width="600" height="330"></canvas>',
@@ -155,7 +155,11 @@ angular.module('sputnik').directive('report', function () {
         },
         link: function (scope, element, attr) {
             scope.element = element[0];
+            var start = new Date();
             scope.draw();
+            var end = new Date();
+            console.info("render time", end.getTime() - start.getTime());
+            $rootScope.$broadcast("report-rendered");
         }
     };
 });
