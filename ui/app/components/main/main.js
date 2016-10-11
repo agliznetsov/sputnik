@@ -7,7 +7,7 @@ angular.module('sputnik').controller('MainController', function ($scope, $rootSc
             {
                 name: 'Settings',
                 url: 'settings',
-                iconClass: 'fa-search'
+                icon: 'fa-cog'
             }
         ],
         right: []

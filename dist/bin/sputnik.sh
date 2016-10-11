@@ -39,6 +39,13 @@ findDirectory()
   done
 }
 
+findJar()
+{
+  for f in "$1/*.jar"; do
+    printf %s "$f"
+    break
+  done
+}
 
 running()
 {
@@ -71,19 +78,24 @@ if [ -z "$SPUTNIK_HOME" ]; then
   SPUTNIK_HOME=/opt/sputnik
 fi
 
+if [ -z "$SPUTNIK_BASE" ]; then
+  SPUTNIK_BASE=/var/sputnik
+fi
+
 
 #####################################################
 # Find a location for the pid file
 #####################################################
-SPUTNIK_RUN=$(findDirectory -w /var/run /usr/var/run $SPUTNIK_HOME)
+SPUTNIK_RUN=$(findDirectory -w /var/run $SPUTNIK_BASE)
 
 #####################################################
 # Find a pid and state file
 #####################################################
 SPUTNIK_PID="$SPUTNIK_RUN/${NAME}.pid"
-
-RUN_ARGS=(-Xms128m -Xmx256m -DSPUTNIK_HOME="$SPUTNIK_HOME" -cp "$SPUTNIK_HOME/config:$SPUTNIK_HOME/lib/*" org.sputnik.SputnikApplication)
-RUN_CMD=("java" ${RUN_ARGS[@]})
+SPUTNIK_JAR=$(findJar "$SPUTNIK_HOME/bin")
+JVM_ARGS=(-Xms128m -Xmx256m)
+RUN_ARGS=(-Dlogging.config="$SPUTNIK_BASE/config/logback.xml" -jar "$SPUTNIK_JAR")
+RUN_CMD=("java" ${JVM_ARGS[@]} ${RUN_ARGS[@]})
 
 ##################################################
 # Do the action
@@ -98,6 +110,7 @@ case "$ACTION" in
         exit 1
       fi
 
+      cd "$SPUTNIK_BASE" 
       "${RUN_CMD[@]}" > /dev/null &
       disown $!
       echo $! > "$SPUTNIK_PID"
@@ -153,6 +166,7 @@ case "$ACTION" in
       exit 1
     fi
 
+    cd "$SPUTNIK_BASE"
     exec "${RUN_CMD[@]}"
     ;;
 

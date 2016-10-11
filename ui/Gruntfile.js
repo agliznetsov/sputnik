@@ -101,6 +101,12 @@ module.exports = function (grunt) {
                     },
                     {
                         expand: true,
+                        cwd: 'app/bower_components/bootstrap/dist',
+                        src: 'fonts/*',
+                        dest: 'dist'
+                    },
+                    {
+                        expand: true,
                         cwd: 'app/bower_components/components-font-awesome',
                         src: 'fonts/*',
                         dest: 'dist'

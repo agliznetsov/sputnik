@@ -7,7 +7,7 @@
 
 
     <!-- build:css(app) styles/vendor.css -->
-    <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.css"/>
+    <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
     <!-- endbuild -->
 
@@ -51,7 +51,7 @@
                 <ul class="nav navbar-nav">
                     <li data-ng-class="{active: isActive('/'+menuItem.url)}" data-ng-repeat="menuItem in menu.left">
                         <a ng-href="{{getUrl(menuItem)}}">
-                            <i class="fa fa-lg" data-ng-class="menuItem.iconClass"></i>
+                            <i class="fa fa-lg" data-ng-class="menuItem.icon"></i>
                             <span class="li-text">{{menuItem.name}}</span>
                         </a>
                     </li>
