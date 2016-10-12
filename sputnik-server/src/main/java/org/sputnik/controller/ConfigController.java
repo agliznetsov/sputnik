@@ -47,13 +47,8 @@ public class ConfigController {
         return configService.getDataSources();
     }
 
-    @RequestMapping("/dataSources/{name}")
-    public DataSource getDataSource(@PathVariable("name") String name) {
-        return configService.getDataSource(name);
-    }
-
     @RequestMapping(value = "/dataSources", method = RequestMethod.POST)
-    public void saveDataProfile(@RequestBody DataSource dataSource) {
+    public void saveDataSource(@RequestBody DataSource dataSource) {
         configService.saveDataSource(dataSource);
     }
 

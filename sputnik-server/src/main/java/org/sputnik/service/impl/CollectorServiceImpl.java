@@ -65,7 +65,7 @@ public class CollectorServiceImpl implements CollectorService {
 
     @SneakyThrows
     private void collectDataSource(DataSource dataSource) {
-        log.debug("Collect {}.{} from {}", dataSource.getHost(), dataSource.getName(), dataSource.getUrl());
+        log.debug("Collect {}.{} from {}", dataSource.getGroupName(), dataSource.getName(), dataSource.getUrl());
         File dataFile = configService.getDataFile(dataSource);
         if (!dataFile.exists()) {
             dbService.createDB(dataFile, dataSource);

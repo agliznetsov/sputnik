@@ -1,24 +1,21 @@
-.sidebar {
-    position: fixed;
-    top: 51px;
-    bottom: 0;
-    left: 0;
-    z-index: 1000;
-    display: block;
-    overflow-x: hidden;
-    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-    border-right: 1px solid #eee;
+.home {
+    margin-top: 51px;
+    display: flex;
 }
 
-/* Sidebar navigation */
-.nav-sidebar {
-    margin-right: -21px; /* 20px padding + 1px border */
-    margin-bottom: 20px;
-    margin-left: -20px;
+.home .sidebar {
+    border-right: 1px solid #eee;
+    min-width: 200px;
+    max-width: 400px;
+    overflow: auto;
+    padding: 5px;
 }
-.nav-sidebar > li > a {
-    padding: 5px 15px 5px 15px;
+
+.home .main {
+    flex: 1;
+    padding: 5px;
 }
+
 .nav-sidebar > .active > a,
 .nav-sidebar > .active > a:hover,
 .nav-sidebar > .active > a:focus {

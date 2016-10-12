@@ -25,7 +25,7 @@ public class ConfigTest {
         dataSerie.setSerieType(DataSerieType.DERIVE);
         dataSerie.setName("a.b");
         graph.getDataSeries().add(dataSerie);
-        assertEquals("{\"dataSeries\":[{\"name\":\"a.b\",\"serieType\":\"DERIVE\",\"drawType\":\"LINE\"}]}", objectMapper.writeValueAsString(graph));
+        assertEquals("{\"dataSeries\":[{\"name\":\"a.b\",\"serieType\":\"DERIVE\",\"fill\":false}]}", objectMapper.writeValueAsString(graph));
     }
 
 }

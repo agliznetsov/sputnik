@@ -45,7 +45,7 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
 
     function setHosts(data) {
         $scope.model.hosts = [];
-        var map = _.groupBy(data, 'host');
+        var map = _.groupBy(data, 'groupName');
         for (var key in map) {
             var host = {
                 name: key,
@@ -57,9 +57,9 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
 
     function selectSource() {
         if ($routeParams.src) {
-            var names = $routeParams.src.split('@');
-            $scope.model.hostName = names[1];
-            $scope.model.sourceName = names[0];
+            var names = $routeParams.src.split('/');
+            $scope.model.hostName = names[0];
+            $scope.model.sourceName = names[1];
             loadData();
         }
     }

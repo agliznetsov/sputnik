@@ -1,8 +1,10 @@
 package org.sputnik.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.std.CollectionSerializer;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -13,111 +15,121 @@ import org.sputnik.service.ConfigService;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @Service
-public class ConfigServiceImpl implements ConfigService {
+public class ConfigServiceImpl implements ConfigService, InitializingBean {
 
     private static final String PROFILES_DIR = "config/profiles";
-    private static final String SOURCES_DIR = "config/sources";
+    private static final String SOURCES_PATH = "config/sources";
     private static final String DATA_DIR = "data";
 
     @Autowired
     SputnikProperties sputnikProperties;
     @Autowired
     ObjectMapper objectMapper;
-    
-    private volatile Map<String, DataProfile> dataProfiles;
-    private volatile Map<String, DataSource> dataSources;
+
+    private File sourcesFile;
 
     @Override
-    public synchronized void refresh() {
-        log.info("Reading configuration from: {}", sputnikProperties.getHomeDirectory());
-        dataProfiles = readFiles(PROFILES_DIR, DataProfile.class);
-        dataSources = readFiles(SOURCES_DIR, DataSource.class);
-        dataSources.values().forEach(this::resolveProfile);
+    public void afterPropertiesSet() throws Exception {
+        new File(sputnikProperties.getHomeDirectory(), PROFILES_DIR).mkdirs();
+        new File(sputnikProperties.getHomeDirectory(), DATA_DIR).mkdirs();
+        sourcesFile = new File(sputnikProperties.getHomeDirectory(), SOURCES_PATH);
     }
 
     @Override
     public Collection<DataProfile> getDataProfiles() {
-        return dataProfiles.values();
+        return readProfiles().values();
     }
 
     @Override
     public DataProfile getDataProfile(String name) {
-        return notNull(dataProfiles.get(name));
+        return notNull(readProfile(name));
     }
 
     @Override
+    @SneakyThrows
     public void saveDataProfile(DataProfile dataProfile) {
-        write(PROFILES_DIR, dataProfile.getName(), dataProfile);
-        dataProfiles.put(dataProfile.getName(), dataProfile);
+        File file = new File(sputnikProperties.getHomeDirectory(), PROFILES_DIR + "/" + dataProfile.getName());
+        objectMapper.writeValue(file, dataProfile);
     }
 
     @Override
     public Collection<DataSource> getDataSources() {
-        return dataSources.values();
+        Collection<DataSource> dataSources = readSources();
+        resolveProfiles(dataSources);
+        return dataSources;
     }
 
     @Override
-    public DataSource getDataSource(String name) {
-        return notNull(dataSources.get(name));
-    }
-
-    @Override
+    @SneakyThrows
     public void saveDataSource(DataSource dataSource) {
-        resolveProfile(dataSource);
-        write(SOURCES_DIR, dataSource.getName(), dataSource);
-        dataSources.put(dataSource.getName(), dataSource);
+        Set<DataSource> sources = readSources();
+        sources.add(dataSource);
+        objectMapper.writeValue(sourcesFile, sources);
     }
 
     @Override
     public File getDataFile(DataSource dataSource) {
-        return new File(sputnikProperties.getHomeDirectory(), DATA_DIR + "/" + dataSource.getHost() + "/" + dataSource.getName());
+        return new File(sputnikProperties.getHomeDirectory(), DATA_DIR + "/" + dataSource.getGroupName() + "/" + dataSource.getName());
     }
 
-//    private //
-
-    private void resolveProfile(DataSource dataSource) {
-        dataSource.setDataProfile(getDataProfile(dataSource.getDataProfileName()));
-    }
+//    private
 
     private <T> T notNull(T src) {
         Assert.notNull(src);
         return src;
     }
 
+    @SneakyThrows
+    private Set<DataSource> readSources() {
+        Set<DataSource> sources = new HashSet<>();
+        if (sourcesFile.exists()) {
+            DataSourceList list = objectMapper.readValue(sourcesFile, DataSourceList.class);
+            sources.addAll(list);
+        }
+        return sources;
+    }
 
-    private <T> Map<String, T> readFiles(String directory, Class<T> clazz) {
-        File dir = new File(sputnikProperties.getHomeDirectory(), directory);
-        dir.mkdirs();
+    private void resolveProfiles(Collection<DataSource> dataSources) {
+        Map<String, DataProfile> profiles = new HashMap<>();
+        for(DataSource ds : dataSources) {
+            DataProfile profile = profiles.get(ds.getDataProfileName());
+            if (profile == null) {
+                profile = readProfile(ds.getDataProfileName());
+                profiles.put(ds.getDataProfileName(), profile);
+            }
+            ds.setDataProfile(profile);
+        }
+    }
 
-        Map<String, T> map = new HashMap<>();
+    @SneakyThrows
+    private Map<String, DataProfile> readProfiles() {
+        File dir = new File(sputnikProperties.getHomeDirectory(), PROFILES_DIR);
+        Map<String, DataProfile> map = new HashMap<>();
         for(File file : dir.listFiles()) {
-            T object = readFile(file, clazz);
+            DataProfile object = objectMapper.readValue(file, DataProfile.class);
             if (object != null) {
-                map.put(object.toString(), object);
+                map.put(object.getName(), object);
             }
         }
         return map;
     }
 
-
-    private <T> T readFile(File file, Class<T> clazz) {
-        try {
-            return objectMapper.readValue(file, clazz);
-        } catch (IOException e) {
-            log.error("Invalid config file " + file.getName(), e);
-            return null;
-        }
-    }
-
     @SneakyThrows
-    private void write(String dir, String name, Object object) {
-        objectMapper.writeValue(new File(new File(sputnikProperties.getHomeDirectory(), dir), name), object);
+    private DataProfile readProfile(String name) {
+        File file = new File(sputnikProperties.getHomeDirectory(), PROFILES_DIR + "/" + name);
+        return objectMapper.readValue(file, DataProfile.class);
     }
 
+    private static class DataSourceList extends ArrayList<DataSource> {};
 }

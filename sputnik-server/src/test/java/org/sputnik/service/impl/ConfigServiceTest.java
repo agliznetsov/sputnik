@@ -9,17 +9,19 @@ import org.sputnik.model.config.DataProfile;
 import org.sputnik.model.config.DataSource;
 import org.sputnik.service.ConfigService;
 
+import java.util.Collection;
+
 import static org.junit.Assert.assertEquals;
 
 public class ConfigServiceTest extends SputnikApplicationTests {
 
     @Autowired
-    ConfigService configService;
+    ConfigServiceImpl configService;
 
     @Before
     public void setUp() throws Exception {
         FileUtils.deleteDirectory(sputnikProperties.getHomeDirectory());
-        configService.refresh();
+        configService.afterPropertiesSet();
         assertEquals(0, configService.getDataProfiles().size());
         assertEquals(0, configService.getDataSources().size());
     }
@@ -35,9 +37,9 @@ public class ConfigServiceTest extends SputnikApplicationTests {
         dataSource.setDataProfileName(dataProfile.getName());
         configService.saveDataSource(dataSource);
 
-        configService.refresh();
         assertEquals(1, configService.getDataProfiles().size());
-        assertEquals(1, configService.getDataSources().size());
-        assertEquals("test_profile", configService.getDataSource(dataSource.getName()).getDataProfile().getName());
+        Collection<DataSource> sources = configService.getDataSources();
+        assertEquals(1, sources.size());
+        assertEquals("test_profile", sources.iterator().next().getDataProfile().getName());
     }
 }

@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ConfigService {
     
-    void refresh();
+//    void refresh();
     
     Collection<DataProfile> getDataProfiles();
 
@@ -18,8 +18,6 @@ public interface ConfigService {
     void saveDataProfile(DataProfile dataProfile);
 
     Collection<DataSource> getDataSources();
-
-    DataSource getDataSource(String name);
 
     void saveDataSource(DataSource dataSource);
 

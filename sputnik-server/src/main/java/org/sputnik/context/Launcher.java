@@ -37,7 +37,6 @@ public class Launcher implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         log.info("Launching sputnik");
         printConfiguration();
-        configService.refresh();
         for (DataSource dataSource : configService.getDataSources()) {
             File dataFile = configService.getDataFile(dataSource);
             if (dataFile.exists()) {

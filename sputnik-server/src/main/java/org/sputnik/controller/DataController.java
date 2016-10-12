@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.sputnik.model.DBDataChunk;
 import org.sputnik.model.DataReport;
+import org.sputnik.model.config.DataProfile;
 import org.sputnik.model.config.DataSerie;
 import org.sputnik.model.config.DataSource;
 import org.sputnik.service.ConfigService;
@@ -30,8 +31,9 @@ public class DataController {
         return System.currentTimeMillis() / 1000;
     }
 
-    @RequestMapping("/data/{host}/{name}")
-    public DataReport getData(@PathVariable("host") String host, @PathVariable("name") String name,
+    @RequestMapping("/data/{group}/{name}")
+    public DataReport getData(@PathVariable("group") String group, 
+                              @PathVariable("name") String name,
                               @RequestParam(value = "start", required = false) Long from,
                               @RequestParam(value = "end", required = false) Long to,
                               @RequestParam(value = "resolution", required = false) Integer resolution) {
@@ -42,7 +44,7 @@ public class DataController {
             from = to - 60 * 60; //last hour by default
         }
 
-        Optional<DataSource> ds = configService.getDataSources().stream().filter(it -> it.getHost().equals(host) && it.getName().equals(name)).findFirst();
+        Optional<DataSource> ds = configService.getDataSources().stream().filter(it -> it.getGroupName().equals(group) && it.getName().equals(name)).findFirst();
         if (ds.isPresent()) {
             File dataFile = configService.getDataFile(ds.get());
             DBDataChunk chunk = dbService.fetchData(dataFile, from, to, resolution);
