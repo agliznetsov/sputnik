@@ -119,7 +119,7 @@ module.exports = function (grunt) {
                         expand: true,
                         cwd: 'dist',
                         src: '{,*/}*.*',
-                        dest: '../src/main/resources/static/'
+                        dest: '../sputnik-server/src/main/resources/static/'
                     }
                 ]
             }

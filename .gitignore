@@ -1,17 +1,7 @@
-target/
-src/main/resources/static
-
-# spring-boot config file
-**/application.properties
+**/target/
 
 ### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
-
-# UI
-ui/app/bower_components
-ui/node_modules
-ui/.tmp
-ui/dist
