@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 @Data
 @EqualsAndHashCode(of = "name")
 public class DataSerie {
-    @NotNull
     String name;
     String pattern;
     String description;

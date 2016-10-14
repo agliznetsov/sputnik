@@ -1,7 +1,6 @@
 package org.sputnik.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ser.std.CollectionSerializer;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -14,15 +13,13 @@ import org.sputnik.model.config.DataSource;
 import org.sputnik.service.ConfigService;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -73,9 +70,42 @@ public class ConfigServiceImpl implements ConfigService, InitializingBean {
     @Override
     @SneakyThrows
     public void saveDataSource(DataSource dataSource) {
-        Set<DataSource> sources = readSources();
-        sources.add(dataSource);
+        try {
+            readProfile(dataSource.getDataProfileName());
+        } catch (Exception e) {
+            log.error("Error", e);
+            throw new IllegalArgumentException("Invalid data profile name");
+        }
+        DataSourceList sources = readSources();
+
+        if (dataSource.getId() == null) {
+            dataSource.setId(UUID.randomUUID().toString());
+            sources.add(dataSource);
+        } else {
+            sources.update(dataSource);
+        }
+
+        sources.checkNames();
         objectMapper.writeValue(sourcesFile, sources);
+    }
+
+    @Override
+    @SneakyThrows
+    public void deleteDataSource(String id) {
+        DataSourceList sources = readSources();
+        boolean found = false;
+        for (int i = 0; i < sources.size(); i++) {
+            if (id.equals(sources.get(i).getId())) {
+                sources.remove(i);
+                found = true;
+                break;
+            }
+        }
+        if (found) {
+            objectMapper.writeValue(sourcesFile, sources);
+        } else {
+            throw new IllegalArgumentException("Data source not found id: " + id);
+        }
     }
 
     @Override
@@ -91,18 +121,19 @@ public class ConfigServiceImpl implements ConfigService, InitializingBean {
     }
 
     @SneakyThrows
-    private Set<DataSource> readSources() {
-        Set<DataSource> sources = new HashSet<>();
+    private DataSourceList readSources() {
         if (sourcesFile.exists()) {
             DataSourceList list = objectMapper.readValue(sourcesFile, DataSourceList.class);
-            sources.addAll(list);
+            list.checkNames();
+            return list;
+        } else {
+            return new DataSourceList();
         }
-        return sources;
     }
 
     private void resolveProfiles(Collection<DataSource> dataSources) {
         Map<String, DataProfile> profiles = new HashMap<>();
-        for(DataSource ds : dataSources) {
+        for (DataSource ds : dataSources) {
             DataProfile profile = profiles.get(ds.getDataProfileName());
             if (profile == null) {
                 profile = readProfile(ds.getDataProfileName());
@@ -116,7 +147,7 @@ public class ConfigServiceImpl implements ConfigService, InitializingBean {
     private Map<String, DataProfile> readProfiles() {
         File dir = new File(sputnikProperties.getHomeDirectory(), PROFILES_DIR);
         Map<String, DataProfile> map = new HashMap<>();
-        for(File file : dir.listFiles()) {
+        for (File file : dir.listFiles()) {
             DataProfile object = objectMapper.readValue(file, DataProfile.class);
             if (object != null) {
                 map.put(object.getName(), object);
@@ -131,5 +162,24 @@ public class ConfigServiceImpl implements ConfigService, InitializingBean {
         return objectMapper.readValue(file, DataProfile.class);
     }
 
-    private static class DataSourceList extends ArrayList<DataSource> {};
+    private static class DataSourceList extends ArrayList<DataSource> {
+        public void checkNames() {
+            Set<String> names = new HashSet<>();
+            for (DataSource ds : this) {
+                if (!names.add(ds.getKey())) {
+                    throw new IllegalStateException("Duplicate data source name: " + ds.getKey());
+                }
+            }
+        }
+
+        public void update(DataSource dataSource) {
+            for (int i = 0; i < size(); i++) {
+                if (get(i).getId().equals(dataSource.getId())) {
+                    this.set(i, dataSource);
+                    return;
+                }
+            }
+            throw new IllegalArgumentException("Datasource with id " + dataSource.getId() + " not found");
+        }
+    }
 }

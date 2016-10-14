@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sputnik', [
-    'ngStorage', 'ngRoute'
+    'ngStorage', 'ngRoute', 'ui.bootstrap'
 ]).config(function ($routeProvider, $httpProvider) {
     $routeProvider
         .when('/home', {
@@ -9,7 +9,8 @@ angular.module('sputnik', [
             controller: 'HomeController'
         })
         .when('/settings', {
-            templateUrl: 'components/settings/settings.html'
+            templateUrl: 'components/settings/settings.html',
+            controller: 'SettingsController'
         })
         .otherwise({
             redirectTo: '/home'

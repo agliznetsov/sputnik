@@ -56,7 +56,6 @@ public class Launcher implements ApplicationRunner {
         for(Map.Entry e : properties.entrySet()) {
             log.info(prefix + "." + e.getKey() + " = " + e.getValue());
         }
-
     }
 
 }

@@ -1,19 +1,22 @@
 package org.sputnik.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.sputnik.model.DBDataChunk;
 import org.sputnik.model.DataReport;
-import org.sputnik.model.config.DataProfile;
 import org.sputnik.model.config.DataSerie;
 import org.sputnik.model.config.DataSource;
+import org.sputnik.service.CollectorService;
 import org.sputnik.service.ConfigService;
 import org.sputnik.service.DBService;
 
 import java.io.File;
+import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,14 +28,23 @@ public class DataController {
     ConfigService configService;
     @Autowired
     DBService dbService;
+    @Autowired
+    TaskScheduler taskScheduler;
+    @Autowired
+    CollectorService collectorService;
 
     @RequestMapping("/now")
     public long now() {
         return System.currentTimeMillis() / 1000;
     }
 
+    @RequestMapping(value = "/collect", method = RequestMethod.POST)
+    public void collect() {
+        taskScheduler.schedule(() -> collectorService.collect(), new Date());
+    }
+
     @RequestMapping("/data/{group}/{name}")
-    public DataReport getData(@PathVariable("group") String group, 
+    public DataReport getData(@PathVariable("group") String group,
                               @PathVariable("name") String name,
                               @RequestParam(value = "start", required = false) Long from,
                               @RequestParam(value = "end", required = false) Long to,

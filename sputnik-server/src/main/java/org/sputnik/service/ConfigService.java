@@ -9,8 +9,6 @@ import java.util.List;
 
 public interface ConfigService {
     
-//    void refresh();
-    
     Collection<DataProfile> getDataProfiles();
 
     DataProfile getDataProfile(String name);
@@ -22,5 +20,6 @@ public interface ConfigService {
     void saveDataSource(DataSource dataSource);
 
     File getDataFile(DataSource dataSource);
-    
+
+    void deleteDataSource(String id);
 }

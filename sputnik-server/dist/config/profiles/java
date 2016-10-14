@@ -76,14 +76,16 @@
         {
           "name": "threads",
           "description": "The number of live threads including both daemon and non-daemon threads.",
-          "fill": true,
-          "color": "orange"
+          "fill": false,
+          "color": "orange",
+          "min": 0,
         },
         {
           "name": "threads.daemon",
           "description": "The number of live daemon threads.",
-          "fill": true,
-          "color": "blue"
+          "fill": false,
+          "color": "blue",
+          "min": 0,
         }
       ]
     },

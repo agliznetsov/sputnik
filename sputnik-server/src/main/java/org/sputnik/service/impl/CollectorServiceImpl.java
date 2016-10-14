@@ -50,22 +50,23 @@ public class CollectorServiceImpl implements CollectorService {
     private Map<String, Pattern> patterns = new ConcurrentHashMap<>();
 
     @Override
-    public void collect() {
+    public synchronized void collect() {
         log.info("Collecting data");
         for (DataSource ds : configService.getDataSources()) {
-            taskExecutor.execute(() -> {
-                try {
-                    collectDataSource(ds);
-                } catch (Throwable e) {
-                    log.error("Data collection error", e);
-                }
-            });
+            if (ds.isEnabled()) {
+                taskExecutor.execute(() -> {
+                    try {
+                        collectDataSource(ds);
+                    } catch (Throwable e) {
+                        log.error("Data collection error", e);
+                    }
+                });
+            }
         }
     }
 
     @SneakyThrows
     private void collectDataSource(DataSource dataSource) {
-        log.debug("Collect {}.{} from {}", dataSource.getGroupName(), dataSource.getName(), dataSource.getUrl());
         File dataFile = configService.getDataFile(dataSource);
         if (!dataFile.exists()) {
             dbService.createDB(dataFile, dataSource);
@@ -98,7 +99,7 @@ public class CollectorServiceImpl implements CollectorService {
                                 value = value * serie.getMultiplier();
                             }
                             if ((serie.getMax() == null || serie.getMax() >= value) && (serie.getMin() == null || serie.getMin() <= value)) {
-                                log.debug("Value: {} = {}", serie.getName(), value);
+                                log.trace("Value: {} = {}", serie.getName(), value);
                                 sample.setValue(serie.getName(), value);
                             } else {
                                 log.debug("Value out of range: {}", value);
@@ -143,7 +144,11 @@ public class CollectorServiceImpl implements CollectorService {
     private Map<String, Number> collectData(DataSource dataSource) {
         for (DataCollector dc : dataCollectors) {
             if (dc.canHandle(dataSource)) {
-                return dc.collectData(dataSource);
+                long start = System.currentTimeMillis();
+                Map<String, Number> data = dc.collectData(dataSource);
+                long end = System.currentTimeMillis();
+                log.info("'{}' from {} collected in {} ms", dataSource, dataSource.getUrl(), (end - start));
+                return data;
             }
         }
         throw new RuntimeException("No data collector found for: " + dataSource.getUrl());

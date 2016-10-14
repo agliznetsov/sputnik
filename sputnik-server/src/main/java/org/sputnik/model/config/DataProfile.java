@@ -8,7 +8,6 @@ import java.util.List;
 
 @Data
 public class DataProfile {
-    @NotNull
     String name;
     List<Graph> graphs = new ArrayList<>();
 

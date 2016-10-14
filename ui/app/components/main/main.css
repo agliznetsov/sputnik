@@ -30,3 +30,12 @@
 .icon-label {
     margin-left: 10px;
 }
+
+.app-body {
+    margin-top: 51px;
+}
+
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched {
+    border: 1px solid red;
+}
