@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('sputnik').controller('MainController', function ($scope, $rootScope, $location) {
+angular.module('sputnik').controller('MainController', function ($scope, $rootScope, $location, notificationService) {
 
     $scope.menu = {
         left: [
@@ -19,6 +19,10 @@ angular.module('sputnik').controller('MainController', function ($scope, $rootSc
 
     $scope.isActive = function (path) {
         return $location.path().indexOf(path) === 0;
+    };
+
+    $scope.removeNotification = function (key) {
+        notificationService.removeNotification(key);
     };
 
 });

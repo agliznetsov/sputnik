@@ -45,6 +45,10 @@ angular.module('sputnik').controller('SettingsController', function ($scope, $ro
         });
     };
 
+    $scope.collect = function () {
+        httpUtils.post("/collect");
+    };
+
     $scope.init();
 
 });

@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
     <title>Sputnik</title>
     <link rel="icon" type="image/png" href="images/sputnik-32.png" sizes="32x32">
 
@@ -13,6 +17,7 @@
 
     <!-- build:css(app) styles/app.css -->
     <link rel="stylesheet" href="components/main/main.css">
+    <link rel="stylesheet" href="components/main/notification.css">
     <link rel="stylesheet" href="components/home/home.css">
     <link rel="stylesheet" href="components/settings/settings.css">
     <!-- endbuild -->
@@ -33,6 +38,7 @@
     <script src="components/main/app.js"></script>
     <script src="components/main/main.js"></script>
     <script src="components/services/httpUtils.js"></script>
+    <script src="components/services/notificationService.js"></script>
     <script src="components/home/home.js"></script>
     <script src="components/report/report.js"></script>
     <script src="components/settings/settings.js"></script>
@@ -44,6 +50,13 @@
 <body ng-app="sputnik" ng-cloak>
 
 <div data-ng-controller="MainController">
+
+    <div class="notification-wrapper">
+        <div data-ng-repeat="(key, value) in $root.notifications" class="modal-content notification notification-animation">
+            <i class="close fa fa-lg fa-times-circle" data-ng-click="removeNotification(key)"></i>
+            <span><i class="type-icon fa fa-lg" data-ng-class="value.type"></i>{{value.message}}</span>
+        </div>
+    </div>
 
     <nav class="navbar navbar-default navbar-fixed-top">
         <div>

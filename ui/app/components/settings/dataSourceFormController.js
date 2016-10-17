@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('sputnik').controller('DataSourceFormController', function ($scope, $uibModalInstance, model, dataProfiles, httpUtils) {
+angular.module('sputnik').controller('DataSourceFormController', function ($scope, $uibModalInstance, model, dataProfiles, httpUtils, notificationService) {
 
     function init() {
         $scope.model = angular.copy(model);
@@ -20,6 +20,8 @@ angular.module('sputnik').controller('DataSourceFormController', function ($scop
         if (!form || form.$valid) {
             save().then(function () {
                 $uibModalInstance.close();
+            }, function (error) {
+                $scope.error(error);
             });
         }
     };
@@ -33,8 +35,17 @@ angular.module('sputnik').controller('DataSourceFormController', function ($scop
         if (yes) {
             httpUtils.delete("/dataSources/" + $scope.model.id).then(function () {
                 $uibModalInstance.close();
+            }, function (error) {
+                $scope.error(error);
             });
         }
+    };
+
+    $scope.error = function (response) {
+        if (response.data && response.data.message)
+            $scope.errorMessage = response.data.message;
+        else
+            $scope.errorMessage = 'Request failed!';
     };
 
     init();
