@@ -1,12 +1,11 @@
 'use strict';
 
-angular.module('sputnik').controller('HomeController', function ($scope, $routeParams, $q, httpUtils, $timeout) {
+angular.module('sputnik').controller('HomeController', function ($scope, $routeParams, $q, $timeout, httpUtils) {
 
     $scope.model = {
         hosts: [],
         ranges: [],
-        reports: [],
-        range: 'day'
+        reports: []
     };
 
     $scope.formatDate = function (moment) {
@@ -18,7 +17,8 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
     };
 
     $scope.selectRange = function (value) {
-        $scope.model.range = value;
+        setRange(value);
+        saveConfig();
         loadData()
     };
 
@@ -27,13 +27,14 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
     };
 
     $scope.setColumns = function (value) {
-        $scope.model.columns = value;
-        $scope.model.reportClass = "col-" + value;
+        setColumns(value);
+        saveConfig();
         displayData();
     };
 
     $scope.chartsListToggled = function (open) {
         if (!open) {
+            saveConfig();
             displayData();
         }
     };
@@ -49,7 +50,8 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
 
     function init() {
         $scope.$on("report-rendered", reportRendered);
-        $scope.setColumns(2);
+        selectSource();
+        loadConfig();
         var requests = {
             dataSources: httpUtils.get("/dataSources"),
             properties: httpUtils.get("/properties")
@@ -61,8 +63,54 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
                 $scope.model.ranges.push({value: i, name: i + " Day" + (i > 1 ? "s" : "")});
             }
             setHosts(result.dataSources.data);
-            selectSource();
+            loadData();
         });
+    }
+
+    function loadConfig() {
+        if ($scope.model.src) {
+            var config = get($scope.model.src);
+            if (config) {
+                setColumns(config.columns || 2);
+                setRange(config.range || 'day');
+                if (config.charts) {
+                    $scope.model.charts = [];
+                    for(var key in config.charts) {
+                        $scope.model.charts.push({
+                            name: key,
+                            enabled: config.charts[key]
+                        });
+                    }
+                }
+            } else {
+                setColumns(2);
+                setRange('day');
+            }
+        }
+    }
+
+    function saveConfig() {
+        if ($scope.model.src) {
+            var config = {
+                columns: $scope.model.columns,
+                range: $scope.model.range,
+                charts: {}
+            };
+            $scope.model.charts.forEach(function (it) {
+                config.charts[it.name] = it.enabled;
+            });
+            set($scope.model.src, config);
+        }
+    }
+
+    function get(key) {
+        var data = window.localStorage.getItem(key);
+        return data ? angular.fromJson(data) : undefined;
+    }
+
+    function set(key, value) {
+        var data = angular.toJson(value);
+        window.localStorage.setItem(key, data);
     }
 
     function setHosts(data) {
@@ -77,12 +125,21 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
         }
     }
 
+    function setColumns(value) {
+        $scope.model.columns = value;
+        $scope.model.reportClass = "col-" + value;
+    }
+
+    function setRange(value) {
+        $scope.model.range = value;
+    }
+
     function selectSource() {
         if ($routeParams.src) {
+            $scope.model.src = $routeParams.src;
             var names = $routeParams.src.split('/');
             $scope.model.hostName = names[0];
             $scope.model.sourceName = names[1];
-            loadData();
         }
     }
 

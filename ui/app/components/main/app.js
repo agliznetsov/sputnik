@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sputnik', [
-    'ngStorage', 'ngRoute', 'ui.bootstrap'
+    'ngRoute', 'ui.bootstrap'
 ]).config(function ($routeProvider, $httpProvider) {
     $routeProvider
         .when('/home', {
