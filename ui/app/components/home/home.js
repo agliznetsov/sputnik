@@ -27,8 +27,24 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
     };
 
     $scope.setColumns = function (value) {
+        $scope.model.columns = value;
         $scope.model.reportClass = "col-" + value;
         displayData();
+    };
+
+    $scope.chartsListToggled = function (open) {
+        if (!open) {
+            displayData();
+        }
+    };
+
+    $scope.chartsLabel = function () {
+        if ($scope.model.charts) {
+            var count = _.filter($scope.model.charts, 'enabled').length;
+            return count == $scope.model.charts.length ? 'all' : count;
+        } else {
+            return '';
+        }
     };
 
     function init() {
@@ -80,6 +96,7 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
             var source = _.find(host.sources, {name: $scope.model.sourceName});
             if (source) {
                 httpUtils.get("/data/" + host.name + "/" + source.name + "?start=" + start.unix() + "&end=" + end.unix() + "&resolution=" + resolution).then(function (response) {
+                    setCharts(response.data);
                     response.data.lastUpdate = toMoment(response.data.lastUpdate);
                     for (var i = 0; i < response.data.timestamps.length; i++) {
                         response.data.timestamps[i] *= 1000;
@@ -90,6 +107,20 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
                 });
             }
         }
+    }
+
+    function setCharts(data) {
+        var map;
+        if ($scope.model.charts) {
+            map = _.keyBy($scope.model.charts, 'name');
+        }
+        $scope.model.charts = data.dataProfile.graphs.map(function (it) {
+            return {
+                name: it.name,
+                description: it.description,
+                enabled: (map && map[it.name]) ? map[it.name].enabled : true
+            }
+        })
     }
 
     function getStart(end) {
@@ -104,13 +135,16 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
 
     function displayData() {
         if ($scope.model.data) {
+            var map = _.keyBy($scope.model.charts, 'name');
             $scope.model.reports = [];
-            $scope.model.renderCount = $scope.model.data.dataProfile.graphs.length;
+            $scope.model.renderCount = _.filter($scope.model.charts, 'enabled').length;
             $timeout(function () {
                 _.forEach($scope.model.data.dataProfile.graphs, function (report) {
-                    report.timestamps = $scope.model.data.timestamps;
-                    report.values = $scope.model.data.values;
-                    $scope.model.reports.push(report);
+                    if (map[report.name].enabled) {
+                        report.timestamps = $scope.model.data.timestamps;
+                        report.values = $scope.model.data.values;
+                        $scope.model.reports.push(report);
+                    }
                 });
             });
         }
