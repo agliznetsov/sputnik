@@ -38,12 +38,6 @@ public class ConfigController {
         return configService.getDataProfile(name);
     }
 
-    @RequestMapping(value = "/dataProfiles", method = RequestMethod.PUT)
-    public void saveDataProfile(@RequestBody DataProfile dataProfile) {
-        NameUtils.validateIdentifier(dataProfile.getName(), "name");
-        configService.saveDataProfile(dataProfile);
-    }
-
     @RequestMapping("/dataSources")
     public Collection<DataSource> getDataSources() {
         return configService.getDataSources();

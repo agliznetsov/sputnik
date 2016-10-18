@@ -35,22 +35,24 @@ public class ConfigServiceImpl implements ConfigService, InitializingBean {
     ObjectMapper objectMapper;
 
     private File sourcesFile;
+    private Map<String, DataProfile> profiles;
 
     @Override
     public void afterPropertiesSet() throws Exception {
         new File(sputnikProperties.getHomeDirectory(), PROFILES_DIR).mkdirs();
         new File(sputnikProperties.getHomeDirectory(), DATA_DIR).mkdirs();
         sourcesFile = new File(sputnikProperties.getHomeDirectory(), SOURCES_PATH);
+        profiles = readProfiles();
     }
 
     @Override
     public Collection<DataProfile> getDataProfiles() {
-        return readProfiles().values();
+        return profiles.values();
     }
 
     @Override
     public DataProfile getDataProfile(String name) {
-        return notNull(readProfile(name));
+        return notNull(profiles.get(name));
     }
 
     @Override
@@ -58,6 +60,7 @@ public class ConfigServiceImpl implements ConfigService, InitializingBean {
     public void saveDataProfile(DataProfile dataProfile) {
         File file = new File(sputnikProperties.getHomeDirectory(), PROFILES_DIR + "/" + dataProfile.getName());
         objectMapper.writeValue(file, dataProfile);
+        profiles.put(dataProfile.getName(), dataProfile);
     }
 
     @Override
@@ -71,7 +74,7 @@ public class ConfigServiceImpl implements ConfigService, InitializingBean {
     @SneakyThrows
     public void saveDataSource(DataSource dataSource) {
         try {
-            readProfile(dataSource.getDataProfileName());
+            getDataProfile(dataSource.getDataProfileName());
         } catch (Exception e) {
             log.error("Error", e);
             throw new IllegalArgumentException("Invalid data profile name");
@@ -136,7 +139,7 @@ public class ConfigServiceImpl implements ConfigService, InitializingBean {
         for (DataSource ds : dataSources) {
             DataProfile profile = profiles.get(ds.getDataProfileName());
             if (profile == null) {
-                profile = readProfile(ds.getDataProfileName());
+                profile = getDataProfile(ds.getDataProfileName());
                 profiles.put(ds.getDataProfileName(), profile);
             }
             ds.setDataProfile(profile);
@@ -154,12 +157,6 @@ public class ConfigServiceImpl implements ConfigService, InitializingBean {
             }
         }
         return map;
-    }
-
-    @SneakyThrows
-    private DataProfile readProfile(String name) {
-        File file = new File(sputnikProperties.getHomeDirectory(), PROFILES_DIR + "/" + name);
-        return objectMapper.readValue(file, DataProfile.class);
     }
 
     private static class DataSourceList extends ArrayList<DataSource> {

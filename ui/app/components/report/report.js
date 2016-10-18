@@ -46,25 +46,27 @@ angular.module('sputnik').directive('report', function ($rootScope, $timeout) {
                         max = it.max;
                     }
                     var data = $scope.model.values[it.name];
-                    for (var i = 0; i < data.length; i++) {
-                        if (it.min != undefined) {
-                            if (data[i] < it.min) {
-                                data[i] = undefined;
+                    if (data) {
+                        for (var i = 0; i < data.length; i++) {
+                            if (it.min != undefined) {
+                                if (data[i] < it.min) {
+                                    data[i] = undefined;
+                                }
+                            }
+                            if (it.max != undefined) {
+                                if (data[i] > it.max) {
+                                    data[i] = undefined;
+                                }
                             }
                         }
-                        if (it.max != undefined) {
-                            if (data[i] > it.max) {
-                                data[i] = undefined;
-                            }
-                        }
+                        datasets.push({
+                            label: it.name,
+                            data: data,
+                            fill: it.fill,
+                            borderColor: it.color,
+                            backgroundColor: it.color
+                        });
                     }
-                    datasets.push({
-                        label: it.name,
-                        data: data,
-                        fill: it.fill,
-                        borderColor: it.color,
-                        backgroundColor: it.color
-                    });
                 });
                 _.reverse(datasets);
 
