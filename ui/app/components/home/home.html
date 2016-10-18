@@ -37,6 +37,16 @@
                         <button class="btn btn-sm btn-default" ng-class="{'active': model.range === 'month'}"  ng-click="selectRange('month')">Month</button>
                         <button class="btn btn-sm btn-default" ng-class="{'active': model.range === 'year'}"  ng-click="selectRange('year')">Year</button>
                     </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                            Columns
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li data-ng-repeat="number in [1,2,3]"><a href ng-click="setColumns(number)">#{{number}}</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
@@ -46,17 +56,8 @@
                 </div>
             </div>
 
-            <div data-ng-hide="model.renderCount">
-                <div class="col-md-6">
-                    <div ng-repeat="report in model.reports">
-                        <report ng-if="$index % 2 === 0" model="report"></report>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div ng-repeat="report in model.reports">
-                        <report ng-if="$index % 2 === 1" model="report"></report>
-                    </div>
-                </div>
+            <div ng-repeat="report in model.reports" class="report-wrapper" ng-class="model.reportClass">
+                <report model="report"></report>
             </div>
 
         </div>

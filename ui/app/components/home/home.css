@@ -26,6 +26,19 @@
     border-bottom: 2px solid #eee;
 }
 
+.report-wrapper {
+    padding: 5px;
+    float: left;
+}
 
+.report-wrapper.col-1 {
+    width: 99%;
+}
 
+.report-wrapper.col-2 {
+    width: 50%;
+}
 
+.report-wrapper.col-3 {
+    width: 33%;
+}

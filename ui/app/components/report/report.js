@@ -3,12 +3,21 @@
 angular.module('sputnik').directive('report', function ($rootScope, $timeout) {
     return {
         restrict: 'E',
-        template: '<canvas class="report" width="600" height="330"></canvas>',
+        template: '<canvas class="report" ></canvas>',
         replace: true,
         scope: {
             model: '='
         },
         controller: function ($scope) {
+
+            var units = [
+                {days: 3, unit: 'hour', format: 'HH:mm'},
+                {days: 14, unit: 'day', format: 'ddd'},
+                {days: 60, unit: 'day', format: 'DD'},
+                {days: 9999999999, unit: 'month', format: 'MMM'}
+            ];
+            var DAY = 1000 * 60 * 60 * 24;
+            var chart;
 
             function init() {
                 Chart.defaults.global.responsive = true;
@@ -19,20 +28,7 @@ angular.module('sputnik').directive('report', function ($rootScope, $timeout) {
                 Chart.defaults.global.elements.point.radius = 0;
                 Chart.defaults.global.tooltips.enabled = true;
                 Chart.defaults.global.tooltips.mode = 'x-axis';
-
-                //draw('day', 120, 'hour', 'HH:mm');
-                // draw('week', (60 * 60 * 24 * 7 / 1000), 'day', 'ddd');
-                // draw('month', (60 * 60 * 24 * 31 / 1000), 'day', 'DD');
-                // draw('year', (60 * 60 * 24 * 365 / 1000), 'month', 'MMM');
             }
-
-            var units = [
-                {days: 3, unit: 'hour', format: 'HH:mm'},
-                {days: 14, unit: 'day', format: 'ddd'},
-                {days: 60, unit: 'day', format: 'DD'},
-                {days: 9999999999, unit: 'month', format: 'MMM'}
-            ];
-            var DAY = 1000 * 60 * 60 * 24;
 
             $scope.draw = function () {
                 var ts = $scope.model.timestamps;
@@ -72,7 +68,7 @@ angular.module('sputnik').directive('report', function ($rootScope, $timeout) {
                 });
                 _.reverse(datasets);
 
-                var chart = new Chart($scope.element, {
+                chart = new Chart($scope.element, {
                     type: 'line',
                     data: {
                         labels: ts,
@@ -158,7 +154,7 @@ angular.module('sputnik').directive('report', function ($rootScope, $timeout) {
             var start = new Date();
             scope.draw();
             var end = new Date();
-            console.info("render time", end.getTime() - start.getTime());
+            // console.info("render time", end.getTime() - start.getTime());
             $rootScope.$broadcast("report-rendered");
         }
     };

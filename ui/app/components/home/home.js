@@ -26,8 +26,14 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
         loadData();
     };
 
+    $scope.setColumns = function (value) {
+        $scope.model.reportClass = "col-" + value;
+        displayData();
+    };
+
     function init() {
         $scope.$on("report-rendered", reportRendered);
+        $scope.setColumns(2);
         var requests = {
             dataSources: httpUtils.get("/dataSources"),
             properties: httpUtils.get("/properties")
@@ -74,7 +80,13 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
             var source = _.find(host.sources, {name: $scope.model.sourceName});
             if (source) {
                 httpUtils.get("/data/" + host.name + "/" + source.name + "?start=" + start.unix() + "&end=" + end.unix() + "&resolution=" + resolution).then(function (response) {
-                    displayData(response.data);
+                    response.data.lastUpdate = toMoment(response.data.lastUpdate);
+                    for (var i = 0; i < response.data.timestamps.length; i++) {
+                        response.data.timestamps[i] *= 1000;
+                    }
+                    console.info("data points #", response.data.timestamps.length);
+                    $scope.model.data = response.data;
+                    displayData();
                 });
             }
         }
@@ -90,27 +102,22 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
         return start;
     }
 
-    function displayData(data) {
-        data.lastUpdate = toMoment(data.lastUpdate);
-        for (var i = 0; i < data.timestamps.length; i++) {
-            data.timestamps[i] *= 1000;
-        }
-        console.info("data points #", data.timestamps.length);
-        $scope.model.data = data;
-        $scope.model.reports = [];
-        $scope.model.renderCount = data.dataProfile.graphs.length;
-        $timeout(function () {
-            _.forEach(data.dataProfile.graphs, function (report) {
-                report.timestamps = data.timestamps;
-                report.values = data.values;
-                $scope.model.reports.push(report);
+    function displayData() {
+        if ($scope.model.data) {
+            $scope.model.reports = [];
+            $scope.model.renderCount = $scope.model.data.dataProfile.graphs.length;
+            $timeout(function () {
+                _.forEach($scope.model.data.dataProfile.graphs, function (report) {
+                    report.timestamps = $scope.model.data.timestamps;
+                    report.values = $scope.model.data.values;
+                    $scope.model.reports.push(report);
+                });
             });
-        });
+        }
     }
 
     function reportRendered() {
         $scope.model.renderCount--;
-        console.info("report-rendered", $scope.model.renderCount);
     }
 
     function toMoment(time) {
