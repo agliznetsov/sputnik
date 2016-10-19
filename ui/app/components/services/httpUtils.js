@@ -1,8 +1,19 @@
 'use strict';
 
-angular.module('sputnik').factory('httpUtils', function ($http) {
+angular.module('sputnik').factory('httpUtils', function ($http, $rootScope) {
 
     var timeout = 5000;
+
+    function headers() {
+        var headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        };
+        if ($rootScope.token) {
+            headers.Authorization = 'Bearer ' + $rootScope.token;
+        }
+        return headers;
+    }
 
     return {
 
@@ -10,9 +21,7 @@ angular.module('sputnik').factory('httpUtils', function ($http) {
             return $http({
                 method: 'GET',
                 url: link,
-                headers: {
-                    'Accept': 'application/json'
-                },
+                headers: headers(),
                 cache: false,
                 timeout: timeout
             });
@@ -23,10 +32,7 @@ angular.module('sputnik').factory('httpUtils', function ($http) {
                 method: 'POST',
                 url: link,
                 data: body,
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
+                headers: headers(),
                 cache: false,
                 timeout: timeout
             });
@@ -36,9 +42,7 @@ angular.module('sputnik').factory('httpUtils', function ($http) {
             return $http({
                 method: 'DELETE',
                 url: link,
-                headers: {
-                    'Accept': 'application/json'
-                },
+                headers: headers(),
                 cache: false,
                 timeout: timeout
             });
@@ -49,10 +53,7 @@ angular.module('sputnik').factory('httpUtils', function ($http) {
                 method: 'PUT',
                 url: link,
                 data: body,
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
+                headers: headers(),
                 cache: false,
                 timeout: timeout
             });

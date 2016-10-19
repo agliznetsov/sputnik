@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('sputnik').controller('SettingsController', function ($scope, $routeParams, $q, $uibModal, httpUtils) {
+angular.module('sputnik').controller('SettingsController', function ($scope, $routeParams, $q, $uibModal, httpUtils, notificationService) {
 
     $scope.model = {
         sources: [],
@@ -46,7 +46,9 @@ angular.module('sputnik').controller('SettingsController', function ($scope, $ro
     };
 
     $scope.collect = function () {
-        httpUtils.post("/collect");
+        httpUtils.post("/collect").catch(function (err) {
+            notificationService.error(err);
+        });
     };
 
     $scope.init();

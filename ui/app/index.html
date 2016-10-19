@@ -40,8 +40,9 @@
     <script src="components/services/notificationService.js"></script>
     <script src="components/home/home.js"></script>
     <script src="components/report/report.js"></script>
+    <script src="components/signin/signin.js"></script>
     <script src="components/settings/settings.js"></script>
-    <script src="components/settings/dataSourceFormController.js"></script>
+    <script src="components/settings/dataSourceForm.js"></script>
     <!--<script src="../.tmp/templateCache.js"></script>-->
     <!-- endbuild -->
 
@@ -72,11 +73,19 @@
                     </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li data-ng-class="{active: isActive('/'+menuItem.url)}" data-ng-repeat="menuItem in menu.right">
-                        <a ng-href="{{getUrl(menuItem)}}">
-                            <i class="fa fa-lg" data-ng-class="menuItem.iconClass"></i>
-                            <span class="li-text">{{menuItem.name}}</span>
-                        </a>
+                    <li ng-hide="$root.user"><a href="#/signin" data-ng-click="signin()">Sign in</a></li>
+                    <li ng-show="$root.user" class="dropdown">
+                        <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{$root.user}} <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li data-ng-repeat="menuItem in menu.right">
+                                <a ng-href="{{getUrl(menuItem)}}">
+                                    <i class="fa fa-lg" data-ng-class="menuItem.iconClass"></i>
+                                    <span class="li-text">{{menuItem.name}}</span>
+                                </a>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="" data-ng-click="signout()">Sign out</a></li>
+                        </ul>
                     </li>
                 </ul>
             </div>

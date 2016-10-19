@@ -3,14 +3,14 @@
 angular.module('sputnik').controller('MainController', function ($scope, $rootScope, $location, notificationService) {
 
     $scope.menu = {
-        left: [
+        left: [],
+        right: [
             {
                 name: 'Settings',
                 url: 'settings',
                 icon: 'fa-cog'
             }
-        ],
-        right: []
+        ]
     };
 
     $scope.getUrl = function (item) {
@@ -24,5 +24,12 @@ angular.module('sputnik').controller('MainController', function ($scope, $rootSc
     $scope.removeNotification = function (key) {
         notificationService.removeNotification(key);
     };
+
+    $scope.signout = function() {
+        delete $rootScope.user;
+        delete $rootScope.token;
+        $location.path("#/home");
+    }
+
 
 });

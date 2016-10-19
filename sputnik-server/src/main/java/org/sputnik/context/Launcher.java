@@ -13,6 +13,7 @@ import org.sputnik.service.CollectorService;
 import org.sputnik.service.ConfigService;
 import org.sputnik.service.DBService;
 import org.sputnik.util.MapUtils;
+import org.sputnik.util.SecurityUtils;
 
 import java.io.File;
 import java.util.Map;
@@ -36,6 +37,7 @@ public class Launcher implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         log.info("Launching sputnik");
+        checkPassword();
         printConfiguration();
         for (DataSource dataSource : configService.getDataSources()) {
             File dataFile = configService.getDataFile(dataSource);
@@ -48,13 +50,22 @@ public class Launcher implements ApplicationRunner {
         taskScheduler.scheduleAtFixedRate(() -> collectorService.collect(), sputnikProperties.getDataRate() * 1_000);
     }
 
+    private void checkPassword() {
+        if (sputnikProperties.getPassword() == null) {
+            sputnikProperties.setPassword(SecurityUtils.getRandomPassword());
+            log.info("Using generated password: {}", sputnikProperties.getPassword());
+        }
+    }
+
     private void printConfiguration() {
         log.info("Configuration properties:");
         Map<String, Object> map = configurationPropertiesReportEndpoint.invoke();
         String prefix = MapUtils.getPath(map, "sputnikProperties.prefix");
         Map<Object, Object> properties = MapUtils.getPath(map, "sputnikProperties.properties");
         for(Map.Entry e : properties.entrySet()) {
-            log.info(prefix + "." + e.getKey() + " = " + e.getValue());
+            if (!"password".equals(e.getKey())) {
+                log.info(prefix + "." + e.getKey() + " = " + e.getValue());
+            }
         }
     }
 

@@ -12,6 +12,10 @@ angular.module('sputnik', [
             templateUrl: 'components/settings/settings.html',
             controller: 'SettingsController'
         })
+        .when('/signin', {
+            templateUrl: 'components/signin/signin.html',
+            controller: 'SigninController'
+        })
         .otherwise({
             redirectTo: '/home'
         });

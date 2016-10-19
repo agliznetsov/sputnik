@@ -25,6 +25,8 @@ public class SputnikProperties {
 
     int archiveDays = 7;
 
+    String password;
+
     public SputnikProperties() {
         String home = System.getProperty("SPUTNIK_BASE");
         if (home == null || home.isEmpty()) {

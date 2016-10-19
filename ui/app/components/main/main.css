@@ -6,6 +6,10 @@
     padding: 0;
 }
 
+.navbar {
+    padding-right: 20px;
+}
+
 .center {
     position: absolute;
     left: 50%;
@@ -42,4 +46,12 @@ select.ng-invalid.ng-touched {
 
 .btn-link {
     cursor: pointer;
+}
+
+.signin-form {
+    width: 300px;
+}
+
+.signin-form button {
+    width: 100%;
 }

@@ -14,7 +14,9 @@ import org.sputnik.model.config.DataSource;
 import org.sputnik.service.CollectorService;
 import org.sputnik.service.ConfigService;
 import org.sputnik.service.DBService;
+import org.sputnik.util.SecurityUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.Date;
 import java.util.Optional;
@@ -32,6 +34,8 @@ public class DataController {
     TaskScheduler taskScheduler;
     @Autowired
     CollectorService collectorService;
+    @Autowired
+    HttpServletRequest request;
 
     @RequestMapping("/now")
     public long now() {
@@ -40,6 +44,7 @@ public class DataController {
 
     @RequestMapping(value = "/collect", method = RequestMethod.POST)
     public void collect() {
+        SecurityUtils.getUser(request);
         taskScheduler.schedule(() -> collectorService.collect(), new Date());
     }
 

@@ -171,7 +171,7 @@ public class ConfigServiceImpl implements ConfigService, InitializingBean {
 
         public void update(DataSource dataSource) {
             for (int i = 0; i < size(); i++) {
-                if (get(i).getId().equals(dataSource.getId())) {
+                if (get(i).getId() != null && get(i).getId().equals(dataSource.getId())) {
                     this.set(i, dataSource);
                     return;
                 }
