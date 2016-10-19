@@ -59,6 +59,7 @@ public class SputnikConfig {
     @Bean
     public TaskScheduler taskScheduler(SputnikProperties properties){
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.setDaemon(true);
         scheduler.setPoolSize(1);
         scheduler.setThreadNamePrefix("task-scheduler-");
         return scheduler;
@@ -67,6 +68,7 @@ public class SputnikConfig {
     @Bean
     public TaskExecutor taskExecutor(SputnikProperties properties) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setDaemon(true);
         executor.setCorePoolSize(properties.collectThreads);
         executor.setMaxPoolSize(properties.collectThreads);
         executor.setThreadNamePrefix("task-executor-");
