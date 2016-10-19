@@ -1,0 +1,181 @@
+{
+  "name": "elasticsearch",
+  "graphs": [
+    {
+      "name": "heap",
+      "description": "Heap Memory, bytes",
+      "dataSeries": [
+        {
+          "name": "heap.committed",
+          "pattern": "(.+?).jvm.mem.heap_committed_in_bytes",
+          "description": "The amount of heap memory in bytes that is committed for the JVM to use.",
+          "fill": true,
+          "color": "orange",
+          "min": 0
+        },
+        {
+          "name": "heap.used",
+          "pattern": "(.+?).jvm.mem.heap_used_in_bytes",
+          "description": "The amount of used heap memory.",
+          "fill": true,
+          "color": "blue",
+          "min": 0
+        },
+        {
+          "name": "heap",
+          "pattern": "(.+?).jvm.mem.heap_max_in_bytes",
+          "description": "The maximum amount of heap memory.",
+          "color": "red"
+        }
+      ]
+    },
+    {
+      "name": "nonheap",
+      "description": "Non-heap Memory, bytes",
+      "dataSeries": [
+        {
+          "name": "nonheap.committed",
+          "pattern": "(.+?).jvm.mem.non_heap_committed_in_bytes",
+          "description": "The amount of non-heap memory in bytes that is committed for the JVM to use.",
+          "fill": true,
+          "color": "orange",
+          "min": 0
+        },
+        {
+          "name": "nonheap.used",
+          "pattern": "(.+?).jvm.mem.non_heap_used_in_bytes",
+          "description": "The amount of used non-heap memory.",
+          "fill": true,
+          "color": "blue",
+          "min": 0
+        }
+      ]
+    },
+    {
+      "name": "cpu",
+      "description": "CPU Usage, %",
+      "dataSeries": [
+        {
+          "pattern": "(.+?).os.cpu_percent",
+          "name": "cpu.system",
+          "description": "The 'recent cpu usage' for the whole system.",
+          "color": "orange",
+          "min": 0,
+          "max": 100
+        },
+        {
+          "pattern": "(.+?).process.cpu.percent",
+          "name": "cpu.process",
+          "description": "The 'recent cpu usage' for the JVM process.",
+          "color": "blue",
+          "min": 0,
+          "max": 100
+        }
+      ]
+    },
+    {
+      "name": "thread",
+      "description": "Threads",
+      "dataSeries": [
+        {
+          "pattern": "(.+?).jvm.threads.count",
+          "name": "threads",
+          "description": "The number of threads.",
+          "color": "blue",
+          "min": 0
+        }
+      ]
+    },
+    {
+      "name": "gc",
+      "description": "GC, ms/sec",
+      "dataSeries": [
+        {
+          "name": "gc.time",
+          "serieType": "DERIVE",
+          "pattern": "(.+?).jvm.gc.collectors.(.+?).collection_time_in_millis",
+          "aggregateFunction": "SUM",
+          "description": "The average collection elapsed time in milliseconds per second.",
+          "color": "blue",
+          "min": 0
+        }
+      ]
+    },
+    {
+      "name": "transport",
+      "description": "Traffic, bytes/sec",
+      "dataSeries": [
+        {
+          "name": "transport.rx",
+          "serieType": "DERIVE",
+          "pattern": "(.+?).transport.rx_size_in_bytes",
+          "description": "Received bytes per second.",
+          "color": "blue",
+          "min": 0
+        },
+        {
+          "name": "transport.tx",
+          "serieType": "DERIVE",
+          "pattern": "(.+?).transport.tx_size_in_bytes",
+          "description": "Transferred bytes per second.",
+          "color": "green",
+          "min": 0
+        }
+      ]
+    },
+    {
+      "name": "docs.count",
+      "description": "Documents count",
+      "dataSeries": [
+        {
+          "pattern": "(.+?).indices.docs.count",
+          "name": "docs.count",
+          "description": "The number of documents in the index.",
+          "color": "blue"
+        }
+      ]
+    },
+    {
+      "name": "docs.size",
+      "description": "Documents size, bytes",
+      "dataSeries": [
+        {
+          "pattern": "(.+?).indices.store.size_in_bytes",
+          "name": "docs.size",
+          "description": "The total size of the documents in the index.",
+          "color": "blue"
+        }
+      ]
+    },
+    {
+      "name": "index",
+      "description": "Indexed documents, doc/sec",
+      "dataSeries": [
+        {
+          "name": "index.count",
+          "serieType": "DERIVE",
+          "pattern": "(.+?).indices.indexing.index_total",
+          "aggregateFunction": "SUM",
+          "description": "The average number of indexed documents per second.",
+          "color": "blue",
+          "min": 0
+        }
+      ]
+    },
+    {
+      "name": "search",
+      "description": "Searched documents, doc/sec",
+      "dataSeries": [
+        {
+          "name": "search.count",
+          "serieType": "DERIVE",
+          "pattern": "(.+?).indices.search.query_total",
+          "aggregateFunction": "SUM",
+          "description": "The average number of searched documents per second.",
+          "color": "blue",
+          "min": 0
+        }
+      ]
+    }
+  ]
+}

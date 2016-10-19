@@ -20,12 +20,7 @@ import org.sputnik.service.ConfigService;
 import org.sputnik.service.DBService;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.OptionalDouble;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.stream.DoubleStream;
@@ -72,6 +67,7 @@ public class CollectorServiceImpl implements CollectorService {
             dbService.createDB(dataFile, dataSource);
         }
         Map<String, Number> data = collectData(dataSource);
+//        dumpData(data);
         RrdDb rrdDb = new RrdDb(dataFile.getPath());
         try {
             updateDB(rrdDb, dataSource, data, now());
@@ -80,12 +76,22 @@ public class CollectorServiceImpl implements CollectorService {
         }
     }
 
+    private void dumpData(Map<String, Number> data) {
+        List<String> list = new ArrayList<>();
+        for(Map.Entry<String, Number> e : data.entrySet()) {
+            list.add(e.getKey() + ": " + e.getValue());
+        }
+        list.sort(Comparator.naturalOrder());
+        list.forEach(System.out::println);
+    }
+
     protected long now() {
         return System.currentTimeMillis() / 1_000;
     }
 
     @SneakyThrows
     protected void updateDB(RrdDb rrdDb, DataSource dataSource, Map<String, Number> data, long time) {
+        long start = System.nanoTime();
         Set<String> dsNames = new HashSet<>();
         Sample sample = rrdDb.createSample(time);
         for (Graph g : dataSource.getDataProfile().getGraphs()) {
@@ -112,22 +118,29 @@ public class CollectorServiceImpl implements CollectorService {
             }
         }
         sample.update();
+        long end = System.nanoTime();
+        log.info("'{}' updated in {} ms", dataSource.getKey(), (end - start) / 1_000_000.0);
     }
 
     protected Double getValue(Map<String, Number> data, DataSerie serie) {
-        if (serie.getAggregateFunction() != null && serie.getPattern() != null) {
+        if (serie.getPattern() != null) {
             Pattern pattern = getPattern(serie.getPattern());
             DoubleStream stream = data.entrySet().stream()
                     .filter(it -> pattern.matcher(it.getKey()).matches())
                     .mapToDouble(it -> it.getValue().doubleValue());
-            switch (serie.getAggregateFunction()) {
-                case SUM:
-                    return stream.sum();
-                case AVG:
-                    OptionalDouble value = stream.average();
-                    return value.isPresent() ? value.getAsDouble() : null;
-                default:
-                    throw new IllegalArgumentException("unsupported aggregate func: " + serie.getAggregateFunction());
+            if (serie.getAggregateFunction() != null) {
+                switch (serie.getAggregateFunction()) {
+                    case SUM:
+                        return stream.sum();
+                    case AVG:
+                        OptionalDouble value = stream.average();
+                        return value.isPresent() ? value.getAsDouble() : null;
+                    default:
+                        throw new IllegalArgumentException("unsupported aggregate func: " + serie.getAggregateFunction());
+                }
+            } else {
+                OptionalDouble value = stream.findFirst();
+                return value.isPresent() ? value.getAsDouble() : null;
             }
         } else if (serie.getName() != null) {
             Number value = data.get(serie.getName());
@@ -147,7 +160,7 @@ public class CollectorServiceImpl implements CollectorService {
                 long start = System.currentTimeMillis();
                 Map<String, Number> data = dc.collectData(dataSource);
                 long end = System.currentTimeMillis();
-                log.info("'{}' from {} collected in {} ms", dataSource, dataSource.getUrl(), (end - start));
+                log.info("'{}' collected in {} ms", dataSource.getKey(), (end - start));
                 return data;
             }
         }

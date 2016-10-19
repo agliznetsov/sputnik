@@ -28,6 +28,12 @@ You need to sign in to be able to add/modify data sources. Use any login and a p
  
 ### Data sources
 
-Currently sputnik can collect data from http endpoints. Spring-boot based applications can be monitored out of the box using default `java` profile.
+Currently sputnik can collect data from http endpoints. 
 
-JEE containers like Jetty/Tomcat can be monitored using provided `metrics.war`. 
+JEE containers like Jetty/Tomcat can be monitored using provided `metrics.war`.
+ 
+### Data profiles
+ 
+Data profile defines what information from a datasource must be archived and represented. The following profiles are available out of the box:
+  * `java`: spring-boot based applications and JEE containers
+  * `elasticsearch`: elasticsearch nodes 
