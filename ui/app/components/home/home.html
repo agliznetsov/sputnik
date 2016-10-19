@@ -21,12 +21,12 @@
                 </div>
                 <div class="pull-right">
                     <div class="btn-group">
-                        <button class="btn btn-sm btn-default" ng-click="refresh()" title="Refresh"><i class="fa fa-refresh"></i></button>
-                        <button class="btn btn-sm btn-default" ng-click="help()" title="Show legend"><i class="fa fa-info"></i></button>
+                        <button class="btn btn-sm" ng-click="refresh()" title="Refresh"><i class="fa fa-refresh"></i></button>
+                        <button class="btn btn-sm" ng-click="help()" title="Show legend"><i class="fa fa-info"></i></button>
                     </div>
 
                     <div class="btn-group" uib-dropdown auto-close="outsideClick" on-toggle="chartsListToggled(open)">
-                        <button id="single-button" title="Select charts" type="button" class="btn btn-sm btn-default" uib-dropdown-toggle>
+                        <button id="single-button" title="Select charts" type="button" class="btn btn-sm" uib-dropdown-toggle>
                             <i class="fa fa-area-chart"/> {{chartsLabel()}}<span class="caret"></span>
                         </button>
                         <ul class="uib-dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="single-button">
@@ -41,7 +41,7 @@
                     </div>
 
                     <div class="btn-group">
-                        <button type="button" title="Select layout" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown"
+                        <button type="button" title="Select layout" class="btn btn-sm dropdown-toggle" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">
                             <i class="fa fa-th-large"/> {{model.columns}}<span class="caret"></span>
                         </button>
@@ -51,8 +51,8 @@
                     </div>
 
                     <div class="btn-group">
-                        <button class="btn btn-sm btn-default" ng-class="{'active': model.range === 'day'}" ng-click="selectRange('day')">Day</button>
-                        <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown"
+                        <button class="btn btn-sm" ng-class="{'active': model.range === 'day'}" ng-click="selectRange('day')">Day</button>
+                        <button type="button" class="btn btn-sm dropdown-toggle" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false"  ng-class="{'active': isCustomRange()}" >
                             Range
                             <span class="caret"></span>
@@ -60,9 +60,9 @@
                         <ul class="dropdown-menu">
                             <li data-ng-repeat="range in model.ranges"><a href ng-click="selectRange(range.value)">{{range.name}}</a></li>
                         </ul>
-                        <button class="btn btn-sm btn-default" ng-class="{'active': model.range === 'week'}"  ng-click="selectRange('week')">Week</button>
-                        <button class="btn btn-sm btn-default" ng-class="{'active': model.range === 'month'}"  ng-click="selectRange('month')">Month</button>
-                        <button class="btn btn-sm btn-default" ng-class="{'active': model.range === 'year'}"  ng-click="selectRange('year')">Year</button>
+                        <button class="btn btn-sm" ng-class="{'active': model.range === 'week'}"  ng-click="selectRange('week')">Week</button>
+                        <button class="btn btn-sm" ng-class="{'active': model.range === 'month'}"  ng-click="selectRange('month')">Month</button>
+                        <button class="btn btn-sm" ng-class="{'active': model.range === 'year'}"  ng-click="selectRange('year')">Year</button>
                     </div>
 
                 </div>

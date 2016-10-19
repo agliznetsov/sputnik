@@ -51,9 +51,11 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
     $scope.help = function () {
         $uibModal.open({
             templateUrl: 'components/home/legend.html',
-            // controller: 'LegendController',
-            controller: function ($scope, profile) {
+            controller: function ($scope, $uibModalInstance, profile) {
                 $scope.profile = profile;
+                $scope.close = function () {
+                    $uibModalInstance.dismiss();
+                }
             },
             size: 'lg',
             resolve: {
