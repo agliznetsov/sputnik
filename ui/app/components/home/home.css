@@ -42,3 +42,18 @@
 .report-wrapper.col-3 {
     width: 33%;
 }
+
+.legend td {
+    padding-right: 10px;
+}
+
+.legend-box {
+    width: 30px;
+    height: 15px;
+}
+
+.legend-name {
+    min-width: 150px;
+    font-weight: bold;
+    text-align: end;
+}

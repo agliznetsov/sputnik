@@ -1,0 +1,21 @@
+<div class="legend">
+    <div class="modal-header">
+        <h5 class="modal-title">{{profile.name}}</h5>
+    </div>
+    <div class="modal-body">
+        <div class="panel panel-default" data-ng-repeat="graph in profile.graphs">
+            <div class="panel-heading">
+                <h5 class="panel-title">{{graph.description}}</h5>
+            </div>
+            <div class="panel-body">
+                <table>
+                    <tr data-ng-repeat="ds in graph.dataSeries">
+                        <td><div class="legend-box" ng-attr-style="background-color: {{ds.color}}"></div></td>
+                        <td class="legend-name">{{ds.name}}</td>
+                        <td>{{ds.description}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

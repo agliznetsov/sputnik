@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('sputnik').controller('HomeController', function ($scope, $routeParams, $q, $timeout, httpUtils) {
+angular.module('sputnik').controller('HomeController', function ($scope, $routeParams, $q, $timeout, $uibModal, httpUtils) {
 
     $scope.model = {
         hosts: [],
@@ -46,6 +46,22 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
         } else {
             return '';
         }
+    };
+
+    $scope.help = function () {
+        $uibModal.open({
+            templateUrl: 'components/home/legend.html',
+            // controller: 'LegendController',
+            controller: function ($scope, profile) {
+                $scope.profile = profile;
+            },
+            size: 'lg',
+            resolve: {
+                profile: function() {
+                    return $scope.model.data.dataProfile
+                }
+            }
+        });
     };
 
     function init() {
