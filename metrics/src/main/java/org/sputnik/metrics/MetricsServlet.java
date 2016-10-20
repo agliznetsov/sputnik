@@ -14,7 +14,7 @@ import java.util.LinkedHashSet;
 @WebServlet(urlPatterns = {"/"})
 public class MetricsServlet extends HttpServlet {
 
-    Collection<PublicMetrics> metricsProviders = new ArrayList<>();
+    Collection<PublicMetrics> metricsProviders = new ArrayList<PublicMetrics>();
 
     public MetricsServlet() {
         metricsProviders.add(new SystemMetrics());

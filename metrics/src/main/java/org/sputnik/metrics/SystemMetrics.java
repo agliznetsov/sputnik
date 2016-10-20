@@ -23,8 +23,8 @@ public class SystemMetrics implements PublicMetrics {
         OperatingSystemMXBean mxBean = ManagementFactory.getOperatingSystemMXBean();
         if (mxBean instanceof com.sun.management.OperatingSystemMXBean) {
             com.sun.management.OperatingSystemMXBean osBean = (com.sun.management.OperatingSystemMXBean) mxBean;
-            result.add(new Metric<>("cpu.process", osBean.getProcessCpuLoad()));
-            result.add(new Metric<>("cpu.system", osBean.getSystemCpuLoad()));
+            result.add(new Metric<Number>("cpu.process", osBean.getProcessCpuLoad()));
+            result.add(new Metric<Number>("cpu.system", osBean.getSystemCpuLoad()));
         }
     }
 

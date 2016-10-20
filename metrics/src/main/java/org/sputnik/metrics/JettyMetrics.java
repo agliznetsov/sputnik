@@ -32,7 +32,7 @@ public class JettyMetrics implements PublicMetrics {
     public Collection<Metric<?>> metrics() {
         if (objectName != null) {
             try {
-                Collection<Metric<?>> metrics = new ArrayList<>();
+                Collection<Metric<?>> metrics = new ArrayList<Metric<?>>();
                 AttributeList values = server.getAttributes(objectName, attributes);
                 for (Attribute a : values.asList()) {
                     for (int i = 0; i < attributes.length; i++) {
