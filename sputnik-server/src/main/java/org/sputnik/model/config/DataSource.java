@@ -3,6 +3,9 @@ package org.sputnik.model.config;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.SneakyThrows;
+
+import java.net.URI;
 
 @Data
 public class DataSource {
@@ -11,7 +14,7 @@ public class DataSource {
     String name;
     String description;
     String url;
-    DataFormat dataFormat;
+    DataFormat dataFormat = DataFormat.JSON;
     String dataProfileName;
     boolean enabled = true;
 

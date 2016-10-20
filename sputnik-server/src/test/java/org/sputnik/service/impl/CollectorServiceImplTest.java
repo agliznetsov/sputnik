@@ -20,10 +20,10 @@ public class CollectorServiceImplTest {
 
     @Test
     public void test_getValue() throws Exception {
-        Map<String, Number> data = new HashMap<>();
-        data.put("heap.used", 1);
+        Map<Object, Object> data = new HashMap<>();
+        data.put("heap.used", "1");
         data.put("gc.sweep.time", 2);
-        data.put("gc.sweep.counter", 3);
+        data.put("gc.sweep.counter", "3");
         data.put("gc.mark.time", 4);
         data.put("gc.mark.counter", 5);
         {

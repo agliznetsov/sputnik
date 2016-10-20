@@ -6,5 +6,5 @@ import java.util.Map;
 
 public interface DataCollector {
     boolean canHandle(DataSource dataSource);
-    Map<String, Number> collectData(DataSource dataSource);
+    String collectData(DataSource dataSource);
 }

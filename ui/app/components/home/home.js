@@ -74,7 +74,7 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
     };
 
     $scope.getRangeName = function (range) {
-        if ($scope.isCustomRange(range)) {
+        if (range && $scope.isCustomRange(range)) {
             var many = range.endsWith('+');
             var days = many ? range.substring(0, range.length - 1) : range;
 
@@ -111,7 +111,9 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
                 }
             }
             setHosts(result.dataSources.data);
-            loadData();
+            if ($scope.model.src) {
+                loadData();
+            }
         });
     }
 
@@ -266,7 +268,7 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
                         $scope.model.reports.push(report);
                     }
                 });
-            });
+            }, 10);
         }
     }
 
