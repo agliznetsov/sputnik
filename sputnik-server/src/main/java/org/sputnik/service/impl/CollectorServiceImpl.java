@@ -13,6 +13,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 import org.sputnik.collector.DataCollector;
 import org.sputnik.config.SputnikProperties;
+import org.sputnik.model.CollectStatus;
 import org.sputnik.model.config.DataFormat;
 import org.sputnik.model.config.DataSerie;
 import org.sputnik.model.config.DataSource;
@@ -49,6 +50,7 @@ public class CollectorServiceImpl implements CollectorService {
     ObjectMapper objectMapper;
 
     private Map<String, Pattern> patterns = new ConcurrentHashMap<>();
+    private Map<String, CollectStatus> statuses = new ConcurrentHashMap<>();
 
     @Override
     public synchronized void collect() {
@@ -59,11 +61,17 @@ public class CollectorServiceImpl implements CollectorService {
         for (DataSource ds : dataSources) {
             if (ds.isEnabled()) {
                 taskExecutor.execute(() -> {
+                    CollectStatus status = new CollectStatus();
                     try {
                         collectDataSource(ds);
+                        status.setOk(true);
                     } catch (Throwable e) {
                         log.error("Error collecting '" + ds.getKey() + "'", e);
+                        status.setErrorMessage(e.getMessage());
+                        status.setOk(false);
                     } finally {
+                        status.setTime(System.currentTimeMillis() / 1000);
+                        statuses.put(ds.getKey(), status);
                         int total = counter.addAndGet(1);
                         if (total == size) {
                             long end = System.currentTimeMillis();
@@ -73,7 +81,11 @@ public class CollectorServiceImpl implements CollectorService {
                 });
             }
         }
+    }
 
+    @Override
+    public CollectStatus getStatus(DataSource source) {
+        return statuses.get(source.getKey());
     }
 
     @SneakyThrows

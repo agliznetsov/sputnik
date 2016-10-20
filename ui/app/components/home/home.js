@@ -92,6 +92,25 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
         }
     };
 
+    $scope.getIcon = function (source) {
+        if (!source.enabled) {
+            return 'fa-ban black'
+        } else if (source.status) {
+            return source.status.ok ? 'fa-check-circle black' : 'fa-exclamation-triangle red';
+        }
+    };
+
+    $scope.getTitle = function (source) {
+        if (source.status) {
+            if (source.status.ok) {
+                var moment = window.moment(source.status.time * 1000);
+                return $scope.formatDate(moment);
+            } else {
+                return source.status.errorMessage;
+            }
+        }
+    };
+
     function init() {
         $scope.$on("report-rendered", reportRendered);
         selectSource();

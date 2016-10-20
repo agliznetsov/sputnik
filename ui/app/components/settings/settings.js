@@ -51,6 +51,23 @@ angular.module('sputnik').controller('SettingsController', function ($scope, $ro
         });
     };
 
+    $scope.getIcon = function (source) {
+        if (source.status) {
+            return source.status.ok ? 'fa-check-circle black' : 'fa-exclamation-triangle red';
+        }
+    };
+
+    $scope.getTitle = function (source) {
+        if (source.status) {
+            if (source.status.ok) {
+                var moment = window.moment(source.status.time * 1000);
+                return moment.format('ll') + ' ' + moment.format('HH:mm');
+            } else {
+                return source.status.errorMessage;
+            }
+        }
+    };
+
     $scope.init();
 
 });

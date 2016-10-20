@@ -5,7 +5,9 @@
             <ul class="nav nav-sidebar">
                 <li data-ng-repeat="source in host.sources"
                     ng-class="{'active': host.name === model.hostName && source.name == model.sourceName }">
-                    <a href="#/home?src={{host.name}}/{{source.name}}" title="{{source.description}}">{{source.name}}</a>
+                        <a href="#/home?src={{host.name}}/{{source.name}}" title="{{source.description}}">
+                            <i class="fa" data-ng-class="getIcon(source)" title="{{getTitle(source)}}"></i> {{source.name}}
+                        </a>
                 </li>
             </ul>
         </div>

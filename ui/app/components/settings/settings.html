@@ -13,22 +13,27 @@
     <table class="table table-striped table-bordered table-hover">
         <thead>
             <tr>
+                <th width="50px">Enabled</th>
                 <th>Group</th>
                 <th>Name</th>
                 <th>Description</th>
                 <th>Profile</th>
                 <th>URL</th>
-                <th width="50px">Enabled</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
             <tr data-ng-repeat="source in model.sources" ng-click="editSource(source)">
+                <td align="middle"><i class="fa" data-ng-class="{'fa-square-o': !source.enabled, 'fa-check-square-o': source.enabled}"></i></td>
                 <td>{{source.groupName}}</td>
                 <td>{{source.name}}</td>
                 <td>{{source.description}}</td>
                 <td>{{source.dataProfileName}}</td>
                 <td>{{source.url}}</td>
-                <td align="middle"><i class="fa" data-ng-class="{'fa-square-o': !source.enabled, 'fa-check-square-o': source.enabled}"></i></td>
+                <td align="middle">
+                    <i class="fa" data-ng-class="getIcon(source)"></i>
+                    {{getTitle(source)}}
+                </td>
             </tr>
         </tbody>
     </table>
