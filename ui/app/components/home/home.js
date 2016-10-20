@@ -4,7 +4,13 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
 
     $scope.model = {
         hosts: [],
-        ranges: [],
+        ranges: [
+            { value: 'hour', name: '4 Hours' },
+            { value: 'day', name: '24 Hours' },
+            { value: 'week', name: 'Week' },
+            { value: 'month', name: 'Month' },
+            { value: 'year', name: 'Year' }
+        ],
         reports: []
     };
 
@@ -12,8 +18,9 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
         return moment ? moment.format('ll') + ' ' + moment.format('HH:mm') : undefined;
     };
 
-    $scope.isCustomRange = function () {
-        return typeof $scope.model.range === 'number';
+    $scope.isCustomRange = function (range) {
+        var index = _.findIndex($scope.model.ranges, ['value', range]);
+        return index === -1;
     };
 
     $scope.selectRange = function (value) {
@@ -66,6 +73,25 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
         });
     };
 
+    $scope.getRangeName = function (range) {
+        if ($scope.isCustomRange(range)) {
+            var many = range.endsWith('+');
+            var days = many ? range.substring(0, range.length - 1) : range;
+
+            var name;
+            if (days == 0)
+                name = 'Today';
+            else if (name == 1)
+                name = 'Yesterday';
+            else
+                name = 'D - ' + days;
+
+            return many ? 'from ' + name : name;
+        } else {
+            return '';
+        }
+    };
+
     function init() {
         $scope.$on("report-rendered", reportRendered);
         selectSource();
@@ -76,9 +102,13 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
         };
         $q.all(requests).then(function (result) {
             $scope.model.properties = result.properties.data;
-            $scope.model.ranges = [];
-            for (var i = 1; i <= $scope.model.properties.archiveDays; i++) {
-                $scope.model.ranges.push({value: i, name: i + " Day" + (i > 1 ? "s" : "")});
+            $scope.model.customRanges = [];
+            $scope.model.customRanges2 = [];
+            for (var i = 0; i < $scope.model.properties.archiveDays; i++) {
+                $scope.model.customRanges.push({value: i + ""});
+                if (i > 0) {
+                    $scope.model.customRanges2.push({value: i + "+"});
+                }
             }
             setHosts(result.dataSources.data);
             loadData();
@@ -162,15 +192,17 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
     }
 
     function loadData() {
-        var end = window.moment();
-        var start = getStart(end);
+        var start = getStart($scope.model.range);
+        var end = getEnd(start, $scope.model.range);
         var seconds = (end.unix() - start.unix());
-        var resolution = $scope.isCustomRange() ? $scope.model.properties.dataRate : Math.floor(seconds / $scope.model.properties.archiveRows);
+        var resolution = $scope.isCustomRange($scope.model.range) ? $scope.model.properties.dataRate : Math.floor(seconds / $scope.model.properties.archiveRows);
         var host = _.find($scope.model.hosts, {name: $scope.model.hostName});
         if (host) {
             var source = _.find(host.sources, {name: $scope.model.sourceName});
             if (source) {
                 httpUtils.get("/data/" + host.name + "/" + source.name + "?start=" + start.unix() + "&end=" + end.unix() + "&resolution=" + resolution).then(function (response) {
+                    $scope.model.start = start;
+                    $scope.model.end = end;
                     setCharts(response.data);
                     response.data.lastUpdate = toMoment(response.data.lastUpdate);
                     for (var i = 0; i < response.data.timestamps.length; i++) {
@@ -198,14 +230,27 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
         })
     }
 
-    function getStart(end) {
-        var start = end.clone();
-        if ($scope.isCustomRange()) {
-            start.subtract($scope.model.range, 'days');
+    function getStart(range) {
+        if ($scope.isCustomRange(range)) {
+            var many = range.endsWith('+');
+            var days = many ? range.substring(0, range.length - 1) : range;
+            var start = moment().startOf('day').subtract(days, 'days');
+            return start;
         } else {
-            start.subtract(1, $scope.model.range + 's');
+            var start = window.moment();
+            var value = $scope.model.range == 'hour' ? 4 : 1;
+            start.subtract(value, $scope.model.range + 's');
+            return start;
         }
-        return start;
+    }
+
+    function getEnd(start, range) {
+        if ($scope.isCustomRange(range)) {
+            var many = range.endsWith('+');
+            return many ? window.moment().endOf('day') : start.clone().endOf('day');
+        } else {
+            return window.moment();
+        }
     }
 
     function displayData() {

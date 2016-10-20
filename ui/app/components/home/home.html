@@ -5,7 +5,7 @@
             <ul class="nav nav-sidebar">
                 <li data-ng-repeat="source in host.sources"
                     ng-class="{'active': host.name === model.hostName && source.name == model.sourceName }">
-                    <a href="#/home?src={{host.name}}/{{source.name}}">{{source.name}}</a>
+                    <a href="#/home?src={{host.name}}/{{source.name}}" title="{{source.description}}">{{source.name}}</a>
                 </li>
             </ul>
         </div>
@@ -17,7 +17,8 @@
         <div ng-show="model.sourceName">
 
             <div class="well well-sm clearfix">
-                <div class="pull-left">{{model.hostName}}/{{model.sourceName}} last update: {{formatDate(model.data.lastUpdate)}}
+                <div class="pull-left">
+                    From: <b>{{formatDate(model.start)}}</b> To: <b>{{formatDate(model.end)}}</b> Last update: <b>{{formatDate(model.data.lastUpdate)}}</b>
                 </div>
                 <div class="pull-right">
                     <div class="btn-group">
@@ -51,18 +52,21 @@
                     </div>
 
                     <div class="btn-group">
-                        <button class="btn btn-sm" ng-class="{'active': model.range === 'day'}" ng-click="selectRange('day')">Day</button>
+                        <button data-ng-repeat="range in model.ranges" class="btn btn-sm" ng-class="{'active': model.range === range.value}"
+                                ng-click="selectRange(range.value)">
+                            {{range.name}}
+                        </button>
+
                         <button type="button" class="btn btn-sm dropdown-toggle" data-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false"  ng-class="{'active': isCustomRange()}" >
-                            Range
+                                aria-haspopup="true" aria-expanded="false"  ng-class="{'active': isCustomRange(model.range)}" >
+                            Custom {{getRangeName(model.range)}}
                             <span class="caret"></span>
                         </button>
-                        <ul class="dropdown-menu">
-                            <li data-ng-repeat="range in model.ranges"><a href ng-click="selectRange(range.value)">{{range.name}}</a></li>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li data-ng-repeat="range in model.customRanges"><a href ng-click="selectRange(range.value)">{{getRangeName(range.value)}}</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li data-ng-repeat="range in model.customRanges2"><a href ng-click="selectRange(range.value)">{{getRangeName(range.value)}}</a></li>
                         </ul>
-                        <button class="btn btn-sm" ng-class="{'active': model.range === 'week'}"  ng-click="selectRange('week')">Week</button>
-                        <button class="btn btn-sm" ng-class="{'active': model.range === 'month'}"  ng-click="selectRange('month')">Month</button>
-                        <button class="btn btn-sm" ng-class="{'active': model.range === 'year'}"  ng-click="selectRange('year')">Year</button>
                     </div>
 
                 </div>

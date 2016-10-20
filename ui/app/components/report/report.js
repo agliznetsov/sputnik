@@ -11,7 +11,7 @@ angular.module('sputnik').directive('report', function ($rootScope, $timeout) {
         controller: function ($scope) {
 
             var units = [
-                {days: 3, unit: 'hour', format: 'HH:mm'},
+                {days: 2, unit: 'hour', format: 'HH:mm'},
                 {days: 14, unit: 'day', format: 'ddd'},
                 {days: 60, unit: 'day', format: 'DD'},
                 {days: 9999999999, unit: 'month', format: 'MMM'}
