@@ -70,16 +70,7 @@
           "color": "blue",
           "min": 0,
           "max": 100
-        },
-        {
-          "pattern": "(.+?).os.load_average",
-          "name": "os.load_average",
-          "description": "System load average for the last minute.",
-          "color": "red",
-          "min": 0,
-          "max": 100
         }
-
       ]
     },
     {

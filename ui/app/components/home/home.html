@@ -74,15 +74,11 @@
                 </div>
             </div>
 
-            <div data-ng-show="model.renderCount">
-                <div class="col-md-12">
-                    <div class="center"><i class="fa fa-lg fa-spinner fa-spin"></i><span class="icon-label">Loading...</span></div>
-                </div>
+            <div class="fill-width" id="loading-div">
+                <div class="center"><i class="fa fa-lg fa-spinner fa-spin"></i><span class="icon-label">Loading...</span></div>
             </div>
 
-            <div ng-repeat="report in model.reports" class="report-wrapper" ng-class="model.reportClass">
-                <report model="report"></report>
-            </div>
+            <div id="charts-container"></div>
 
         </div>
     </div>

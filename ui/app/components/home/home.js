@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('sputnik').controller('HomeController', function ($scope, $routeParams, $q, $timeout, $uibModal, httpUtils) {
+angular.module('sputnik').controller('HomeController', function ($scope, $routeParams, $q, $timeout, $uibModal, httpUtils, chartUtils) {
 
     $scope.model = {
         hosts: [],
@@ -10,8 +10,7 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
             { value: 'week', name: 'Week' },
             { value: 'month', name: 'Month' },
             { value: 'year', name: 'Year' }
-        ],
-        reports: []
+        ]
     };
 
     $scope.formatDate = function (moment) {
@@ -112,7 +111,6 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
     };
 
     function init() {
-        $scope.$on("report-rendered", reportRendered);
         selectSource();
         loadConfig();
         var requests = {
@@ -279,22 +277,22 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
     function displayData() {
         if ($scope.model.data) {
             var map = _.keyBy($scope.model.charts, 'name');
-            $scope.model.reports = [];
-            $scope.model.renderCount = _.filter($scope.model.charts, 'enabled').length;
+            var parent = $('#charts-container');
+            parent.empty();
+            $('#loading-div').show();
             $timeout(function () {
                 _.forEach($scope.model.data.dataProfile.graphs, function (report) {
                     if (map[report.name].enabled) {
                         report.timestamps = $scope.model.data.timestamps;
                         report.values = $scope.model.data.values;
-                        $scope.model.reports.push(report);
+                        parent.append('<div class="report-wrapper ' + $scope.model.reportClass +'"><canvas class="report" id="' + report.name + '"/></div>');
+                        var element = $('#' + report.name);
+                        chartUtils.draw(report, element);
                     }
                 });
-            }, 10);
+                $('#loading-div').hide();
+            });
         }
-    }
-
-    function reportRendered() {
-        $scope.model.renderCount--;
     }
 
     function toMoment(time) {
