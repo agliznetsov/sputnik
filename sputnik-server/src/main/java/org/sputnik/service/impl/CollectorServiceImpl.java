@@ -56,7 +56,7 @@ public class CollectorServiceImpl implements CollectorService {
     public synchronized void collect() {
         long start = System.currentTimeMillis();
         Collection<DataSource> dataSources = configService.getDataSources();
-        int size = dataSources.size();
+        long size = dataSources.stream().filter(DataSource::isEnabled).count();
         AtomicInteger counter = new AtomicInteger(0);
         for (DataSource ds : dataSources) {
             if (ds.isEnabled()) {
@@ -97,11 +97,16 @@ public class CollectorServiceImpl implements CollectorService {
         Map<Object, Object> data = collectData(dataSource, status);
 //        dumpData(data);
         RrdDb rrdDb = new RrdDb(dataFile.getPath());
+        long start = System.nanoTime();
+        long end;
         try {
             updateDB(rrdDb, dataSource, data, now());
         } finally {
+            end = System.nanoTime();
             rrdDb.close();
         }
+        log.info("'{}' collected in {} ms, updated in {} ms", dataSource.getKey(), status.getPing(), (end - start) / 1_000_000.0);
+
     }
 
     private void dumpData(Map<String, Number> data) {
@@ -119,7 +124,6 @@ public class CollectorServiceImpl implements CollectorService {
 
     @SneakyThrows
     protected void updateDB(RrdDb rrdDb, DataSource dataSource, Map<Object, Object> data, long time) {
-        long start = System.nanoTime();
         Set<String> dsNames = new HashSet<>();
         Sample sample = rrdDb.createSample(time);
         for (Graph g : dataSource.getDataProfile().getGraphs()) {
@@ -146,8 +150,6 @@ public class CollectorServiceImpl implements CollectorService {
             }
         }
         sample.update();
-        long end = System.nanoTime();
-        log.info("'{}' updated in {} ms", dataSource.getKey(), (end - start) / 1_000_000.0);
     }
 
     protected Double getValue(Map<Object, Object> data, DataSerie serie) {
@@ -197,7 +199,6 @@ public class CollectorServiceImpl implements CollectorService {
                 Map<Object, Object> data = convertData(dc.collectData(dataSource), dataSource.getDataFormat());
                 long end = System.currentTimeMillis();
                 status.setPing((int) (end - start));
-                log.info("'{}' collected in {} ms", dataSource.getKey(), (end - start));
                 return data;
             }
         }

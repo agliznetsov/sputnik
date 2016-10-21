@@ -192,6 +192,11 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
             $scope.model.hosts.push(host);
         }
         _.orderBy($scope.model.hosts, ['name']);
+        if ($scope.model.hostName) {
+            $scope.model.host = _.find($scope.model.hosts, ['name', $scope.model.hostName]);
+        } else if ($scope.model.hosts.length) {
+            $scope.model.host = $scope.model.hosts[0];
+        }
     }
 
     function setColumns(value) {
@@ -281,17 +286,25 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
             parent.empty();
             $('#loading-div').show();
             $timeout(function () {
-                _.forEach($scope.model.data.dataProfile.graphs, function (report) {
-                    if (map[report.name].enabled) {
-                        report.timestamps = $scope.model.data.timestamps;
-                        report.values = $scope.model.data.values;
-                        parent.append('<div class="report-wrapper ' + $scope.model.reportClass +'"><canvas class="report" id="' + report.name + '"/></div>');
-                        var element = $('#' + report.name);
-                        chartUtils.draw(report, element);
-                    }
-                });
-                $('#loading-div').hide();
-            });
+                var i = 0;
+                try {
+                    _.forEach($scope.model.data.dataProfile.graphs, function (report) {
+                        if (map[report.name].enabled) {
+                            report.timestamps = $scope.model.data.timestamps;
+                            report.values = $scope.model.data.values;
+                            var id = "chart" + (++i);
+                            parent.append('<div class="report-wrapper ' + $scope.model.reportClass + '"><canvas class="report" id="' + id + '"/></div>');
+                            var element = $('#' + id);
+                            if (element.length)
+                                chartUtils.draw(report, element[0]);
+                            else
+                                console.error("not found", report.name);
+                        }
+                    });
+                } finally {
+                    $('#loading-div').hide();
+                }
+            }, 50);
         }
     }
 

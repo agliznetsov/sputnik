@@ -64,18 +64,20 @@ public class DataController {
         Optional<DataSource> ds = configService.getDataSources().stream().filter(it -> it.getGroupName().equals(group) && it.getName().equals(name)).findFirst();
         if (ds.isPresent()) {
             File dataFile = configService.getDataFile(ds.get());
-            DBDataChunk chunk = dbService.fetchData(dataFile, from, to, resolution);
             DataReport report = new DataReport();
             report.setDataProfile(ds.get().getDataProfile());
             report.setFrom(from);
             report.setTo(to);
-            report.setTimestamps(chunk.timestamps);
-            report.setLastUpdate(chunk.lastUpdate);
-            Set<String> names = report.getDataProfile().getGraphs().stream().flatMap(it -> it.getDataSeries().stream()).map(DataSerie::getName).collect(Collectors.toSet());
-            for (int i = 0; i < chunk.dsNames.length; i++) {
-                String dsName = chunk.dsNames[i];
-                if (names.contains(dsName)) {
-                    report.getValues().put(dsName, chunk.values[i]);
+            if (dataFile.exists()) {
+                DBDataChunk chunk = dbService.fetchData(dataFile, from, to, resolution);
+                report.setTimestamps(chunk.timestamps);
+                report.setLastUpdate(chunk.lastUpdate);
+                Set<String> names = report.getDataProfile().getGraphs().stream().flatMap(it -> it.getDataSeries().stream()).map(DataSerie::getName).collect(Collectors.toSet());
+                for (int i = 0; i < chunk.dsNames.length; i++) {
+                    String dsName = chunk.dsNames[i];
+                    if (names.contains(dsName)) {
+                        report.getValues().put(dsName, chunk.values[i]);
+                    }
                 }
             }
             return report;

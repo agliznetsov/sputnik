@@ -1,16 +1,35 @@
 <div class="app-body home">
     <div class="sidebar">
-        <div data-ng-repeat="host in model.hosts">
-            <h4 class="list-header">{{host.name}}</h4>
-            <ul class="nav nav-sidebar">
-                <li data-ng-repeat="source in host.sources"
-                    ng-class="{'active': host.name === model.hostName && source.name == model.sourceName }">
-                        <a href="#/home?src={{host.name}}/{{source.name}}" title="{{source.description}}">
-                            <i class="fa" data-ng-class="getIcon(source)" title="{{getTitle(source)}}"></i> {{source.name}}
-                        </a>
+            <!--<div class="dropdown">-->
+                <!--<button class="btn dropdown-toggle" type="button" style="width: 100%" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">-->
+                    <!--{{model.host.name}}-->
+                    <!--<span class="caret pull-right"></span>-->
+                <!--</button>-->
+                <!--<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">-->
+                    <!--<li data-ng-repeat="host in model.hosts">-->
+                        <!--<a href="" data-ng-click="model.host = host">{{host.name}}</a>-->
+                    <!--</li>-->
+                <!--</ul>-->
+            <!--</div>-->
+
+        <div class="btn-group" uib-dropdown dropdown-append-to-body>
+            <button id="btn-append-to-body" type="button" class="btn" uib-dropdown-toggle>
+                {{model.host.name}} <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="btn-append-to-body">
+                <li data-ng-repeat="host in model.hosts">
+                    <a href="" data-ng-click="model.host = host">{{host.name}}</a>
                 </li>
             </ul>
         </div>
+        <ul class="nav nav-sidebar">
+            <li data-ng-repeat="source in model.host.sources"
+                ng-class="{'active': host.name === model.hostName && source.name == model.sourceName }">
+                    <a href="#/home?src={{model.host.name}}/{{source.name}}" title="{{source.description}}">
+                        <i class="fa" data-ng-class="getIcon(source)" title="{{getTitle(source)}}"></i> {{source.name}}
+                    </a>
+            </li>
+        </ul>
     </div>
 
 
@@ -74,9 +93,7 @@
                 </div>
             </div>
 
-            <div class="fill-width" id="loading-div">
-                <div class="center"><i class="fa fa-lg fa-spinner fa-spin"></i><span class="icon-label">Loading...</span></div>
-            </div>
+            <div id="loading-div" class="center"><i class="fa fa-lg fa-spinner fa-spin"></i><span class="icon-label">Loading...</span></div>
 
             <div id="charts-container"></div>
 
