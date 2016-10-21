@@ -17,7 +17,7 @@ public class SputnikProperties {
      */
     int dataRate = 60;
 
-    int httpTimeout = 5000;
+    int timeout = 5000;
 
     int collectThreads = 5;
 

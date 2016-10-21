@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('sputnik').controller('SettingsController', function ($scope, $routeParams, $q, $uibModal, httpUtils, notificationService) {
+angular.module('sputnik').controller('SettingsController', function ($scope, $routeParams, $q, $uibModal, $timeout, httpUtils, notificationService) {
 
     $scope.model = {
         sources: [],
@@ -46,9 +46,13 @@ angular.module('sputnik').controller('SettingsController', function ($scope, $ro
     };
 
     $scope.collect = function () {
-        httpUtils.post("/collect").catch(function (err) {
-            notificationService.error(err);
-        });
+        httpUtils.post("/collect").then(function () {
+                $timeout($scope.refresh, 1000);
+            },
+            function (err) {
+                notificationService.error(err);
+            }
+        );
     };
 
     $scope.getIcon = function (source) {
@@ -60,7 +64,7 @@ angular.module('sputnik').controller('SettingsController', function ($scope, $ro
     $scope.getTitle = function (source) {
         if (source.status) {
             if (source.status.ok) {
-                var moment = window.moment(source.status.time * 1000);
+                var moment = window.moment(source.status.updated * 1000);
                 return moment.format('ll') + ' ' + moment.format('HH:mm');
             } else {
                 return source.status.errorMessage;

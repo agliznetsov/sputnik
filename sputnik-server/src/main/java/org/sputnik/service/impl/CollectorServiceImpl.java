@@ -63,14 +63,14 @@ public class CollectorServiceImpl implements CollectorService {
                 taskExecutor.execute(() -> {
                     CollectStatus status = new CollectStatus();
                     try {
-                        collectDataSource(ds);
+                        collectDataSource(ds, status);
                         status.setOk(true);
                     } catch (Throwable e) {
                         log.error("Error collecting '" + ds.getKey() + "'", e);
                         status.setErrorMessage(e.getMessage());
                         status.setOk(false);
                     } finally {
-                        status.setTime(System.currentTimeMillis() / 1000);
+                        status.setUpdated(System.currentTimeMillis() / 1000);
                         statuses.put(ds.getKey(), status);
                         int total = counter.addAndGet(1);
                         if (total == size) {
@@ -89,12 +89,12 @@ public class CollectorServiceImpl implements CollectorService {
     }
 
     @SneakyThrows
-    private void collectDataSource(DataSource dataSource) {
+    private void collectDataSource(DataSource dataSource, CollectStatus status) {
         File dataFile = configService.getDataFile(dataSource);
         if (!dataFile.exists()) {
             dbService.createDB(dataFile, dataSource);
         }
-        Map<Object, Object> data = collectData(dataSource);
+        Map<Object, Object> data = collectData(dataSource, status);
 //        dumpData(data);
         RrdDb rrdDb = new RrdDb(dataFile.getPath());
         try {
@@ -190,12 +190,13 @@ public class CollectorServiceImpl implements CollectorService {
         return patterns.computeIfAbsent(regex, Pattern::compile);
     }
 
-    private Map<Object, Object> collectData(DataSource dataSource) {
+    private Map<Object, Object> collectData(DataSource dataSource, CollectStatus status) {
         for (DataCollector dc : dataCollectors) {
             if (dc.canHandle(dataSource)) {
                 long start = System.currentTimeMillis();
                 Map<Object, Object> data = convertData(dc.collectData(dataSource), dataSource.getDataFormat());
                 long end = System.currentTimeMillis();
+                status.setPing((int) (end - start));
                 log.info("'{}' collected in {} ms", dataSource.getKey(), (end - start));
                 return data;
             }

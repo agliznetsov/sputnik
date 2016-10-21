@@ -38,7 +38,7 @@ public class ScriptCollector implements DataCollector {
         pb.redirectOutput(out);
         Process process = pb.start();
 
-        if (!process.waitFor(sputnikProperties.getHttpTimeout(), TimeUnit.MILLISECONDS)) {
+        if (!process.waitFor(sputnikProperties.getTimeout(), TimeUnit.MILLISECONDS)) {
             process.destroyForcibly();
             out.delete();
             throw new IllegalStateException("Timeout while executing " + file.getAbsolutePath());

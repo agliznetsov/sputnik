@@ -4,7 +4,8 @@ import lombok.Data;
 
 @Data
 public class CollectStatus {
-    long time;
+    long updated;
+    int ping;
     boolean ok;
     String errorMessage;
 }

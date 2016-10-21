@@ -55,8 +55,8 @@ public class SputnikConfig {
     @Bean
     public ClientHttpRequestFactory clientHttpRequestFactory(SputnikProperties properties) throws Exception {
         HttpComponentsClientHttpRequestFactory rf = new HttpComponentsClientHttpRequestFactory();
-        rf.setReadTimeout(properties.httpTimeout);
-        rf.setConnectTimeout(properties.httpTimeout);
+        rf.setReadTimeout(properties.timeout);
+        rf.setConnectTimeout(properties.timeout);
         return rf;
     }
 
