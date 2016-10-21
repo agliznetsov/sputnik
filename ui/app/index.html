@@ -65,7 +65,7 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li data-ng-class="{active: isActive('/'+menuItem.url)}" data-ng-repeat="menuItem in menu.left">
+                    <li data-ng-class="{active: isActive('/'+menuItem.url)}" data-ng-repeat="menuItem in menu.left" data-ng-show="isVisible(menuItem)">
                         <a ng-href="{{getUrl(menuItem)}}">
                             <i class="fa fa-lg" data-ng-class="menuItem.icon"></i>
                             <span class="li-text">{{menuItem.name}}</span>
@@ -73,19 +73,20 @@
                     </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li ng-hide="$root.user"><a href="#/signin" data-ng-click="signin()">Sign in</a></li>
-                    <li ng-show="$root.user" class="dropdown">
-                        <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{$root.user}} <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li data-ng-repeat="menuItem in menu.right">
-                                <a ng-href="{{getUrl(menuItem)}}">
-                                    <i class="fa fa-lg" data-ng-class="menuItem.iconClass"></i>
-                                    <span class="li-text">{{menuItem.name}}</span>
-                                </a>
-                            </li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="" data-ng-click="signout()">Sign out</a></li>
-                        </ul>
+                    <li data-ng-class="{active: isActive('/'+menuItem.url)}" data-ng-repeat="menuItem in menu.right" data-ng-show="isVisible(menuItem)">
+                        <a ng-href="{{getUrl(menuItem)}}">
+                            <i class="fa fa-lg" data-ng-class="menuItem.icon"></i>
+                            <span class="li-text">{{menuItem.name}}</span>
+                        </a>
+                    </li>
+                    <li data-ng-hide="$root.user">
+                        <a href="#/signin" data-ng-click="signin()">Sign in</a>
+                    </li>
+                    <li data-ng-show="$root.user">
+                        <a href="" title="Sign out" data-ng-click="signout()">
+                            <i class="fa fa-lg fa-power-off"></i>
+                            <span class="li-text">{{$root.user}}</span>
+                        </a>
                     </li>
                 </ul>
             </div>

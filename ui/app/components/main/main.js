@@ -17,6 +17,10 @@ angular.module('sputnik').controller('MainController', function ($scope, $rootSc
         return '#/' + item.url;
     };
 
+    $scope.isVisible = function (item) {
+        return $rootScope.user;
+    };
+
     $scope.isActive = function (path) {
         return $location.path().indexOf(path) === 0;
     };
