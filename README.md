@@ -1,4 +1,4 @@
-# Sputnik
+![screenshot](screenshot.png)
 
 Long-term processes performance monitor application. Similar to Munin or Cacti. The advantages of Sputnik are simple configuration, low resource consumption and modern UI.
 
@@ -28,7 +28,7 @@ You need to sign in to be able to add/modify data sources. Use any login and a p
  
 ### Data sources
 
-Currently sputnik can collect data from http endpoints. 
+Currently sputnik can collect data from http endpoints and execute shell scripts. 
 
 JEE containers like Jetty/Tomcat can be monitored using provided `metrics.war`.
  
