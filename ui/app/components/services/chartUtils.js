@@ -137,7 +137,7 @@ angular.module('sputnik').factory('chartUtils', function ($timeout) {
         }
     }
 
-    var legendItem = _.template('<div class="legend-item">' + '<div data-index="${ds.index}" class="legend-box clickable" style="background-color: ${ds.color}"/>${ds.name}: <span class="legend-value">${value}</span></div>');
+    var legendItem = _.template('<div class="legend-item" title="${ds.description}">' + '<div data-index="${ds.index}" class="legend-box clickable" style="background-color: ${ds.color}"/>${ds.name}: <span class="legend-value">${value}</span></div>');
 
     function legend(report, chart) {
         var res = '';
