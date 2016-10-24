@@ -58,7 +58,7 @@ angular.module('sputnik').factory('chartUtils', function ($timeout) {
         });
         _.reverse(datasets);
 
-        new Chart(element, {
+        return new Chart(element, {
             type: 'line',
             data: {
                 labels: ts,
@@ -70,7 +70,7 @@ angular.module('sputnik').factory('chartUtils', function ($timeout) {
                     text: model.description
                 },
                 legend: {
-                    position: 'bottom'
+                    display: false
                 },
                 tooltips: {
                     custom: function (tooltip) {
@@ -137,8 +137,51 @@ angular.module('sputnik').factory('chartUtils', function ($timeout) {
         }
     }
 
+    var legendItem = _.template('<div class="legend-item">' + '<div data-index="${ds.index}" class="legend-box clickable" style="background-color: ${ds.color}"/>${ds.name}: <span class="legend-value">${value}</span></div>');
+
+    function legend(report, chart) {
+        var res = '';
+        var dataIndex = findLastDataIndex(report);
+        var index = report.dataSeries.length;
+        report.dataSeries.forEach(function (ds) {
+            ds.index = --index;
+            var values = report.values[ds.name];
+            var value = dataIndex >= 0 ? values[dataIndex] : undefined;
+            res += legendItem({ds: ds, value: human(value)});
+        });
+        var legend = $('<div class="legend-items">' + res + '</div>');
+        legend.click(function(event) {
+            if (event.target.attributes['data-index']) {
+                var index = event.target.attributes['data-index'].value;
+                if (!chart.config.data.datasetsCopy) {
+                    chart.config.data.datasetsCopy = [chart.config.data.datasets.length];
+                }
+                if (chart.config.data.datasets[index].data.length) {
+                    chart.config.data.datasetsCopy[index] = chart.config.data.datasets[index].data;
+                    chart.config.data.datasets[index].data = [];
+                } else {
+                    chart.config.data.datasets[index].data = chart.config.data.datasetsCopy[index];
+                }
+                chart.update();
+            }
+        });
+        return legend;
+    }
+
+    function findLastDataIndex(report) {
+        for (var i = report.timestamps.length - 1; i >= 0; i--) {
+            for (var key in report.values) {
+                if (typeof report.values[key][i] === 'number') {
+                    return i;
+                }
+            }
+        }
+        return undefined;
+    }
+
     return {
-        draw: draw
+        draw: draw,
+        legend: legend
     }
 
 });

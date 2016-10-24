@@ -279,6 +279,7 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
         }
     }
 
+    var report = _.template('<div class="report-wrapper ${reportClass}"><canvas class="report"/></div>');
     function displayData() {
         if ($scope.model.data) {
             var map = _.keyBy($scope.model.charts, 'name');
@@ -286,19 +287,15 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
             parent.empty();
             $('#loading-div').show();
             $timeout(function () {
-                var i = 0;
                 try {
-                    _.forEach($scope.model.data.dataProfile.graphs, function (report) {
-                        if (map[report.name].enabled) {
-                            report.timestamps = $scope.model.data.timestamps;
-                            report.values = $scope.model.data.values;
-                            var id = "chart" + (++i);
-                            parent.append('<div class="report-wrapper ' + $scope.model.reportClass + '"><canvas class="report" id="' + id + '"/></div>');
-                            var element = $('#' + id);
-                            if (element.length)
-                                chartUtils.draw(report, element[0]);
-                            else
-                                console.error("not found", report.name);
+                    _.forEach($scope.model.data.dataProfile.graphs, function (gr) {
+                        if (map[gr.name].enabled) {
+                            gr.timestamps = $scope.model.data.timestamps;
+                            gr.values = $scope.model.data.values;
+                            var wrapper = $(report({reportClass: $scope.model.reportClass}));
+                            parent.append(wrapper);
+                            var chart = chartUtils.draw(gr, wrapper.find('.report'));
+                            wrapper.append(chartUtils.legend(gr, chart));
                         }
                     });
                 } finally {

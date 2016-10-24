@@ -30,9 +30,18 @@
     border-bottom: 2px solid #eee;
 }
 
+#loading-div {
+    z-index: 1000;
+}
+
+#charts-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
 .report-wrapper {
     padding: 5px;
-    float: left;
 }
 
 .report-wrapper.col-1 {
@@ -52,8 +61,14 @@
 }
 
 .legend-box {
+    display: inline-block;
     width: 30px;
     height: 15px;
+    margin-right: 5px;
+}
+
+.legend-box.clickable {
+    cursor: pointer;
 }
 
 .legend-name {
@@ -62,6 +77,19 @@
     text-align: end;
 }
 
-#loading-div {
-    z-index: 1000;
+.legend-items {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: center;
+    user-select: none;
+}
+
+.legend-item {
+    margin-right: 15px;
+}
+
+.legend-value {
+    white-space: pre;
+    font-weight: bold;
 }
