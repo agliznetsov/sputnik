@@ -80,6 +80,16 @@ public class SputnikConfig {
     }
 
     @Bean
+    public TaskExecutor outputReader(SputnikProperties properties) {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setDaemon(true);
+        executor.setCorePoolSize(properties.collectThreads);
+        executor.setMaxPoolSize(properties.collectThreads);
+        executor.setThreadNamePrefix("output-reader-");
+        return executor;
+    }
+
+    @Bean
     public Launcher launcher() {
         return new Launcher();
     }

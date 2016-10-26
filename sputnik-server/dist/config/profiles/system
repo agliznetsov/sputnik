@@ -1,0 +1,48 @@
+{
+  "name": "system",
+  "graphs": [
+    {
+      "name": "memory",
+      "description": "Memory, bytes",
+      "dataSeries": [
+        {
+          "name": "mem.used",
+          "description": "The amount of used system memory.",
+          "fill": true,
+          "color": "green",
+	      "min": 0
+        },
+        {
+          "name": "swap.used",
+          "description": "The amount of used swap.",
+          "fill": true,
+          "color": "orange"
+        },
+        {
+          "name": "mem.total",
+          "description": "Total amount of system memory.",
+          "color": "red",
+          "min": 0
+        },
+        {
+          "name": "swap.total",
+          "description": "Total amount of swap.",
+          "color": "purple",
+          "min": 0
+        }
+      ]
+    },
+    {
+      "name": "cpu",
+      "description": "CPU",
+      "dataSeries": [
+        {
+          "name": "load.average",
+          "description": "System average load for the last minute.",
+          "color": "blue",
+          "min": 0
+        }
+      ]
+    }
+  ]
+}

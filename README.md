@@ -30,6 +30,9 @@ You need to sign in to be able to add/modify data sources. Use any login and a p
 
 Currently sputnik can collect data from http endpoints and execute shell scripts. 
 
+There are some predefined linux scripts in the `/scripts` directory. To run a script on a remote host use this command:
+`cat <script> | ssh -T <host>`
+
 JEE containers like Jetty/Tomcat can be monitored using provided `metrics.war`.
  
 ### Data profiles
