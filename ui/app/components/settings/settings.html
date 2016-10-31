@@ -8,17 +8,36 @@
         <div class="btn-group">
             <button class="btn btn-sm" ng-click="collect()" title="Force data collection"><i class="fa fa-gears"></i></button>
         </div>
+        <div class="pull-right">
+            <label>Showing {{model.sources.length}} of {{model.total}}</label>
+        </div>
     </div>
 
     <table class="table table-striped table-bordered table-hover">
         <thead>
             <tr>
-                <th width="50px">Enabled</th>
-                <th>Group</th>
-                <th>Name</th>
+                <th width="50px" style="text-align: center">
+                    <label>Enabled</label>
+                </th>
+                <th>
+                    <label>Group</label>
+                    <input class="form-control input-sm" type="text" data-ng-model="model.filter.groupName" ng-keypress="onKeyPress($event)"
+                           uib-typeahead="group for group in model.groupNames | filter:$viewValue" typeahead-editable="false" typeahead-on-select="onFilterSelect()">
+                </th>
+                <th>
+                    <label>Name</label>
+                    <input class="form-control input-sm" type="text" data-ng-model="model.filter.name" ng-keypress="onKeyPress($event)">
+                </th>
                 <th>Description</th>
-                <th>Profile</th>
-                <th>URL</th>
+                <th>
+                    <label>Profile</label>
+                    <input class="form-control input-sm" type="text" data-ng-model="model.filter.profile" ng-keypress="onKeyPress($event)"
+                           uib-typeahead="profile for profile in model.dataProfiles | filter:$viewValue" typeahead-editable="false" typeahead-on-select="onFilterSelect()">
+                </th>
+                <th>
+                    <label>URL</label>
+                    <input class="form-control input-sm" type="text" data-ng-model="model.filter.url" ng-keypress="onKeyPress($event)">
+                </th>
                 <th>Status</th>
                 <th>Ping, ms</th>
             </tr>

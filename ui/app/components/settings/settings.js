@@ -4,7 +4,8 @@ angular.module('sputnik').controller('SettingsController', function ($scope, $ro
 
     $scope.model = {
         sources: [],
-        dataProfiles: []
+        dataProfiles: [],
+        filter: {}
     };
 
     $scope.init = function () {
@@ -18,7 +19,20 @@ angular.module('sputnik').controller('SettingsController', function ($scope, $ro
 
     $scope.refresh = function () {
         httpUtils.get("/dataSources").then(function (response) {
-            $scope.model.sources = _.orderBy(response.data, ['groupName', 'name']);
+            $scope.model.groupNames = response.data.map(function(it) {return it.groupName});
+            $scope.model.groupNames = _.uniq($scope.model.groupNames);
+
+            $scope.model.total = response.data.length;
+            var f = $scope.model.filter;
+            var sources = _.filter(response.data, function (it) {
+                return (
+                    (!f.groupName || f.groupName === it.groupName)
+                    && (!f.name || it.name.indexOf(f.name) >= 0)
+                    && (!f.profile || it.dataProfileName === f.profile)
+                    && (!f.url || it.url.indexOf(f.url) >= 0)
+                );
+            });
+            $scope.model.sources = _.orderBy(sources, ['groupName', 'name']);
         })
     };
 
@@ -35,6 +49,9 @@ angular.module('sputnik').controller('SettingsController', function ($scope, $ro
             resolve: {
                 model: function () {
                     return source;
+                },
+                groupNames: function() {
+                    return $scope.model.groupNames;
                 },
                 dataProfiles: function () {
                     return $scope.model.dataProfiles;
@@ -69,6 +86,16 @@ angular.module('sputnik').controller('SettingsController', function ($scope, $ro
             } else {
                 return source.status.errorMessage;
             }
+        }
+    };
+
+    $scope.onFilterSelect = function () {
+        $scope.refresh();
+    };
+
+    $scope.onKeyPress = function ($event) {
+        if ($event.keyCode === 13) {
+            $scope.refresh();
         }
     };
 

@@ -1,11 +1,12 @@
 'use strict';
 
-angular.module('sputnik').controller('DataSourceFormController', function ($scope, $uibModalInstance, model, dataProfiles, httpUtils, notificationService) {
+angular.module('sputnik').controller('DataSourceFormController', function ($scope, $uibModalInstance, model, dataProfiles, groupNames, httpUtils) {
 
     function init() {
         $scope.model = angular.copy(model);
         $scope.dataFormats = ['JSON', 'PROPERTIES'];
         $scope.dataProfiles = dataProfiles;
+        $scope.groupNames = groupNames;
     }
 
     function save() {

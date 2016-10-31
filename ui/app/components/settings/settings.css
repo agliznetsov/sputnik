@@ -5,3 +5,7 @@
 .settings table {
     cursor: pointer;
 }
+
+.settings table th {
+    vertical-align: top !important;
+}
