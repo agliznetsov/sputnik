@@ -5,11 +5,11 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
     $scope.model = {
         hosts: [],
         ranges: [
-            { value: 'hour', name: '4 Hours' },
-            { value: 'day', name: '24 Hours' },
-            { value: 'week', name: 'Week' },
-            { value: 'month', name: 'Month' },
-            { value: 'year', name: 'Year' }
+            {value: 'hour', name: '4 Hours'},
+            {value: 'day', name: '24 Hours'},
+            {value: 'week', name: 'Week'},
+            {value: 'month', name: 'Month'},
+            {value: 'year', name: 'Year'}
         ]
     };
 
@@ -65,7 +65,7 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
             },
             size: 'lg',
             resolve: {
-                profile: function() {
+                profile: function () {
                     return $scope.model.data.dataProfile
                 }
             }
@@ -111,6 +111,7 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
     };
 
     function init() {
+        $('#loading-div').hide();
         selectSource();
         loadConfig();
         var requests = {
@@ -132,6 +133,22 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
                 loadData();
             }
         });
+        if ($scope.model.sourceName) {
+            autoRefresh();
+            $scope.$on("$destroy", function (event) {
+                    $timeout.cancel(timer);
+                }
+            );
+        }
+    }
+
+    var timer;
+
+    function autoRefresh() {
+        timer = $timeout(function () {
+            $scope.refresh();
+            autoRefresh();
+        }, 60000);
     }
 
     function loadConfig() {
@@ -142,7 +159,7 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
                 setRange(config.range || 'day');
                 if (config.charts) {
                     $scope.model.charts = [];
-                    for(var key in config.charts) {
+                    for (var key in config.charts) {
                         $scope.model.charts.push({
                             name: key,
                             enabled: config.charts[key]
@@ -231,12 +248,14 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
                     $scope.model.end = end;
                     setCharts(response.data);
                     response.data.lastUpdate = toMoment(response.data.lastUpdate);
-                    for (var i = 0; i < response.data.timestamps.length; i++) {
-                        response.data.timestamps[i] *= 1000;
+                    if (response.data.timestamps) {
+                        for (var i = 0; i < response.data.timestamps.length; i++) {
+                            response.data.timestamps[i] *= 1000;
+                        }
+                        console.info("data points #", response.data.timestamps.length);
+                        $scope.model.data = response.data;
+                        displayData();
                     }
-                    console.info("data points #", response.data.timestamps.length);
-                    $scope.model.data = response.data;
-                    displayData();
                 });
             }
         }
@@ -280,6 +299,7 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
     }
 
     var report = _.template('<div class="report-wrapper ${reportClass}"><canvas class="report"/></div>');
+
     function displayData() {
         if ($scope.model.data) {
             var map = _.keyBy($scope.model.charts, 'name');
