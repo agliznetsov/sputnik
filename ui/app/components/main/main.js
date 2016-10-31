@@ -6,9 +6,14 @@ angular.module('sputnik').controller('MainController', function ($scope, $rootSc
         left: [],
         right: [
             {
-                name: 'Settings',
-                url: 'settings',
-                icon: 'fa-cog'
+                name: 'Sources',
+                url: 'sources',
+                icon: 'fa-database'
+            },
+            {
+                name: 'Profiles',
+                url: 'profiles',
+                icon: 'fa-cogs'
             }
         ]
     };

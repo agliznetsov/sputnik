@@ -10,11 +10,7 @@ angular.module('sputnik').controller('DataSourceFormController', function ($scop
     }
 
     function save() {
-        if ($scope.model.id) {
-            return httpUtils.put("/dataSources/" + $scope.model.id, $scope.model);
-        } else {
-            return httpUtils.post("/dataSources/", $scope.model);
-        }
+        return httpUtils.post("/dataSources/", $scope.model);
     }
 
     $scope.clickOk = function (form) {

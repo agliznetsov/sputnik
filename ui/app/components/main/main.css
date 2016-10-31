@@ -63,3 +63,7 @@ select.ng-invalid.ng-touched {
 .black {
     color: black;
 }
+
+.clickable {
+    cursor: pointer;
+}

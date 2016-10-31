@@ -1,0 +1,114 @@
+<div class="profile-editor">
+    <div class="well well-sm">
+        <div class="btn-group">
+            <button class="btn btn-sm" ng-if="selectionType == 'profile'" data-ng-click="addGraph()">Add graph</button>
+            <button class="btn btn-sm" ng-if="selectionType == 'graph'" data-ng-click="removeGraph()">Remove graph</button>
+            <button class="btn btn-sm" ng-if="selectionType == 'graph'" data-ng-click="addSerie()">Add serie</button>
+            <button class="btn btn-sm" ng-if="selectionType == 'serie'" data-ng-click="removeSerie()">Remove serie</button>
+        </div>
+        <div class="btn-group pull-right">
+            <button class="btn btn-sm btn-success" data-ng-click="save()">Save</button>
+            <button class="btn btn-sm" data-ng-click="cancel()">Cancel</button>
+        </div>
+    </div>
+
+    <div class="body">
+        <div class="profile-navigation">
+            <label ng-click="select('profile', model)" data-ng-class="{'active': model == selection}">{{model.name || '[profile]'}}</label>
+            <div class="graph" data-ng-repeat="graph in model.graphs">
+                <label ng-click="select('graph', graph)" data-ng-class="{'active': graph == selection}">{{graph.name || '[graph]'}}</label>
+                <div class="serie" data-ng-repeat="serie in graph.dataSeries">
+                    <label ng-click="select('serie', serie, graph)" data-ng-class="{'active': serie == selection}">{{serie.name || '[serie]'}}</label>
+                </div>
+            </div>
+        </div>
+        <div class="profile-body" ng-switch="selectionType">
+            <div ng-switch-when="profile">
+                <table class="table-form">
+                    <tr>
+                        <td width="200px"><label class="control-label" for="modelName">Name</label></td>
+                        <td width="400px"><input class="form-control" type="text" id="modelName" data-ng-model="selection.name" required></td>
+                    </tr>
+                </table>
+            </div>
+            <div ng-switch-when="graph">
+                <table class="table-form">
+                    <tr>
+                        <td width="200px"><label class="control-label" for="graphName">Name</label></td>
+                        <td width="400px"><input class="form-control" type="text" id="graphName" data-ng-model="selection.name" required></td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label" for="graphName">Description</label></td>
+                        <td><textarea class="form-control" type="text" id="graphDescription" data-ng-model="selection.description" required></textarea></td>
+                    </tr>
+                </table>
+            </div>
+            <div ng-switch-when="serie">
+                <table class="table-form">
+                    <tr>
+                        <td width="200px"><label class="control-label" for="serieName">Name</label></td>
+                        <td width="400px">
+                            <input class="form-control" type="text" id="serieName" data-ng-model="selection.name" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label" for="seriePattern">Pattern</label></td>
+                        <td>
+                            <input class="form-control" type="text" id="seriePattern" data-ng-model="selection.pattern">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label" for="serieDescription">Description</label></td>
+                        <td>
+                            <textarea class="form-control" id="serieDescription" data-ng-model="selection.description"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label" for="serieType">Type</label></td>
+                        <td>
+                            <select id="serieType" ng-options="option for option in serieTypes"
+                                    data-ng-model="selection.serieType" class="form-control" required></select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label" for="serieFunction">Aggregate function</label></td>
+                        <td>
+                            <select id="serieFunction" ng-options="option for option in serieFunctions"
+                                    data-ng-model="selection.aggregateFunction" class="form-control"></select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label" for="serieFill">Fill</label></td>
+                        <td>
+                            <input type="checkbox" id="serieFill" data-ng-model="selection.fill" style="height: 25px">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label" for="serieColor">Color</label></td>
+                        <td>
+                            <input class="form-control" type="text" id="serieColor" data-ng-model="selection.color">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label" for="serieMultiplier">Multiplier</label></td>
+                        <td>
+                            <input class="form-control" type="number" id="serieMultiplier" data-ng-model="selection.multiplier">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label" for="serieMin">Min</label></td>
+                        <td>
+                            <input class="form-control" type="number" id="serieMin" data-ng-model="selection.min">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label" for="serieMax">Max</label></td>
+                        <td>
+                            <input class="form-control" type="number" id="serieMax" data-ng-model="selection.max">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

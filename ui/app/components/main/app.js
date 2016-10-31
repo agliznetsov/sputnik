@@ -5,16 +5,16 @@ angular.module('sputnik', [
 ]).config(function ($routeProvider, $httpProvider) {
     $routeProvider
         .when('/home', {
-            templateUrl: 'components/home/home.html',
-            controller: 'HomeController'
+            templateUrl: 'components/home/home.html'
         })
-        .when('/settings', {
-            templateUrl: 'components/settings/settings.html',
-            controller: 'SettingsController'
+        .when('/sources', {
+            templateUrl: 'components/settings/settings.html'
+        })
+        .when('/profiles', {
+            templateUrl: 'components/profiles/profiles.html'
         })
         .when('/signin', {
-            templateUrl: 'components/signin/signin.html',
-            controller: 'SigninController'
+            templateUrl: 'components/signin/signin.html'
         })
         .otherwise({
             redirectTo: '/home'

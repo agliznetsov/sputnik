@@ -1,0 +1,45 @@
+.profile-editor {
+    padding: 10px;
+}
+
+.profile-editor .body{
+    display: flex;
+}
+
+.profile-navigation {
+    min-width: 200px;
+    border-right: 1px solid gray;
+    padding-right: 10px;
+}
+
+.profile-navigation label {
+    width: 100%;
+    padding: 4px;
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+.profile-navigation label:hover, .profile-navigation label.active {
+    background-color: #DDDDDD;
+}
+
+.profile-body {
+    flex: 1;
+    padding-left: 10px;
+}
+
+.graph {
+    padding-left: 20px;
+}
+
+.serie {
+    padding-left: 20px;
+}
+
+.table-form td {
+    padding-bottom: 10px;
+}
+
+.table-form label {
+    margin-right: 10px;
+}
