@@ -4,11 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
+import org.sputnik.model.Identifiable;
 
 import java.net.URI;
 
 @Data
-public class DataSource {
+public class DataSource implements Identifiable {
     String id;
     String groupName;
     String name;
@@ -21,7 +22,7 @@ public class DataSource {
     @JsonIgnore
     DataProfile dataProfile;
 
-    @JsonIgnore
+    @Override
     public String getKey() {
         return groupName + "/" + name;
     }

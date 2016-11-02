@@ -3,23 +3,20 @@ package org.sputnik.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.rrd4j.ConsolFun;
-import org.rrd4j.DsType;
 import org.rrd4j.core.RrdDb;
-import org.rrd4j.core.RrdDef;
 import org.rrd4j.core.Sample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 import org.sputnik.collector.DataCollector;
 import org.sputnik.config.SputnikProperties;
+import org.sputnik.dao.Repository;
 import org.sputnik.model.CollectStatus;
 import org.sputnik.model.config.DataFormat;
 import org.sputnik.model.config.DataSerie;
 import org.sputnik.model.config.DataSource;
 import org.sputnik.model.config.Graph;
 import org.sputnik.service.CollectorService;
-import org.sputnik.service.ConfigService;
 import org.sputnik.service.DBService;
 
 import java.io.File;
@@ -30,8 +27,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.DoubleStream;
 
-import static org.rrd4j.ConsolFun.*;
-
 @Slf4j
 @Service
 public class CollectorServiceImpl implements CollectorService {
@@ -39,7 +34,7 @@ public class CollectorServiceImpl implements CollectorService {
     @Autowired
     SputnikProperties sputnikProperties;
     @Autowired
-    ConfigService configService;
+    Repository<DataSource> dataSourceRepository;
     @Autowired
     DBService dbService;
     @Autowired
@@ -55,7 +50,7 @@ public class CollectorServiceImpl implements CollectorService {
     @Override
     public synchronized void collect() {
         long start = System.currentTimeMillis();
-        Collection<DataSource> dataSources = configService.getDataSources();
+        Collection<DataSource> dataSources = dataSourceRepository.findAll();
         long size = dataSources.stream().filter(DataSource::isEnabled).count();
         AtomicInteger counter = new AtomicInteger(0);
         for (DataSource ds : dataSources) {
@@ -90,7 +85,7 @@ public class CollectorServiceImpl implements CollectorService {
 
     @SneakyThrows
     private void collectDataSource(DataSource dataSource, CollectStatus status) {
-        File dataFile = configService.getDataFile(dataSource);
+        File dataFile = dbService.getDataFile(dataSource);
         if (!dataFile.exists()) {
             dbService.createDB(dataFile, dataSource);
         }

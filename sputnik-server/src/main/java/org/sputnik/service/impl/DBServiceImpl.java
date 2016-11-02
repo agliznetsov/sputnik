@@ -10,8 +10,10 @@ import org.rrd4j.core.FetchData;
 import org.rrd4j.core.FetchRequest;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDef;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.sputnik.config.SputnikConfig;
 import org.sputnik.config.SputnikProperties;
 import org.sputnik.model.DBDataChunk;
 import org.sputnik.model.config.DataSerie;
@@ -20,6 +22,7 @@ import org.sputnik.model.config.Graph;
 import org.sputnik.service.DBService;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -30,7 +33,7 @@ import static org.rrd4j.ConsolFun.AVERAGE;
 
 @Slf4j
 @Service
-public class DBServiceImpl implements DBService {
+public class DBServiceImpl implements InitializingBean, DBService {
     public static final int DAY = 60 * 60 * 24; //seconds in a day
     public static final int WEEK = DAY * 7; //seconds in a week
     public static final int MONTH = DAY * 31; //seconds in a month
@@ -38,6 +41,19 @@ public class DBServiceImpl implements DBService {
 
     @Autowired
     SputnikProperties sputnikProperties;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        File file = new File(sputnikProperties.getHomeDirectory(), SputnikConfig.DATA_DIR);
+        if (!file.exists() && !file.mkdirs()) {
+            throw new IOException("Failed to create " + file);
+        }
+    }
+
+    @Override
+    public File getDataFile(DataSource dataSource) {
+        return new File(sputnikProperties.getHomeDirectory(), SputnikConfig.DATA_DIR + "/" + dataSource.getGroupName() + "/" + dataSource.getName());
+    }
 
     @Override
     @SneakyThrows
@@ -56,9 +72,7 @@ public class DBServiceImpl implements DBService {
             }
         }
         addArchives(rrdDef, AVERAGE);
-        dataFile.getParentFile().mkdirs();
         new RrdDb(rrdDef).close();
-
     }
 
     private void addDataSource(RrdDef rrdDef, DataSerie serie) {

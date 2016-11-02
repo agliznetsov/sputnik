@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.sputnik.dao.Repository;
 import org.sputnik.model.DBDataChunk;
 import org.sputnik.model.DataReport;
 import org.sputnik.model.config.DataSerie;
 import org.sputnik.model.config.DataSource;
 import org.sputnik.service.CollectorService;
-import org.sputnik.service.ConfigService;
 import org.sputnik.service.DBService;
 import org.sputnik.util.SecurityUtils;
 
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class DataController {
 
     @Autowired
-    ConfigService configService;
+    Repository<DataSource> dataSourceRepository;
     @Autowired
     DBService dbService;
     @Autowired
@@ -61,9 +61,9 @@ public class DataController {
             from = to - 60 * 60; //last hour by default
         }
 
-        Optional<DataSource> ds = configService.getDataSources().stream().filter(it -> it.getGroupName().equals(group) && it.getName().equals(name)).findFirst();
+        Optional<DataSource> ds = dataSourceRepository.findAll().stream().filter(it -> it.getGroupName().equals(group) && it.getName().equals(name)).findFirst();
         if (ds.isPresent()) {
-            File dataFile = configService.getDataFile(ds.get());
+            File dataFile = dbService.getDataFile(ds.get());
             DataReport report = new DataReport();
             report.setDataProfile(ds.get().getDataProfile());
             report.setFrom(from);

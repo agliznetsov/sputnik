@@ -18,12 +18,18 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
 import org.sputnik.context.Launcher;
+import org.sputnik.dao.DataProfileRepository;
+import org.sputnik.dao.DataSourceRepository;
 
+import java.io.File;
 import java.util.ArrayList;
 
 
 @Configuration
 public class SputnikConfig {
+    public static final String PROFILES_DIR = "config/profiles";
+    public static final String SOURCES_DIR = "config/sources";
+    public static final String DATA_DIR = "data";
 
     @Bean
     public ObjectMapper objectMapper() {
@@ -37,6 +43,16 @@ public class SputnikConfig {
     @Bean
     public SputnikProperties sputnikProperties() {
         return new SputnikProperties();
+    }
+
+    @Bean
+    public DataProfileRepository dataProfileRepository(SputnikProperties sputnikProperties) {
+        return new DataProfileRepository(new File(sputnikProperties.getHomeDirectory(), PROFILES_DIR));
+    }
+
+    @Bean
+    public DataSourceRepository dataSourceRepository(SputnikProperties sputnikProperties) {
+        return new DataSourceRepository(new File(sputnikProperties.getHomeDirectory(), SOURCES_DIR));
     }
 
     @Bean

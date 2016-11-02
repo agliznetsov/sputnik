@@ -1,21 +1,23 @@
 package org.sputnik.context;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.actuate.endpoint.ConfigurationPropertiesReportEndpoint;
 import org.springframework.scheduling.TaskScheduler;
-import org.springframework.stereotype.Component;
 import org.sputnik.config.SputnikProperties;
+import org.sputnik.dao.Repository;
 import org.sputnik.model.config.DataSource;
 import org.sputnik.service.CollectorService;
-import org.sputnik.service.ConfigService;
 import org.sputnik.service.DBService;
 import org.sputnik.util.MapUtils;
 import org.sputnik.util.SecurityUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Map;
 
 @Slf4j
@@ -24,9 +26,9 @@ public class Launcher implements ApplicationRunner {
     @Autowired
     SputnikProperties sputnikProperties;
     @Autowired
-    ConfigService configService;
-    @Autowired
     DBService dbService;
+    @Autowired
+    Repository<DataSource> dataSourceRepository;
     @Autowired
     CollectorService collectorService;
     @Autowired
@@ -39,8 +41,8 @@ public class Launcher implements ApplicationRunner {
         log.info("Launching sputnik");
         checkPassword();
         printConfiguration();
-        for (DataSource dataSource : configService.getDataSources()) {
-            File dataFile = configService.getDataFile(dataSource);
+        for (DataSource dataSource : dataSourceRepository.findAll()) {
+            File dataFile = dbService.getDataFile(dataSource);
             if (dataFile.exists()) {
                 dbService.checkDB(dataFile, dataSource);
             } else {
@@ -53,7 +55,7 @@ public class Launcher implements ApplicationRunner {
     private void checkPassword() {
         if (sputnikProperties.getPassword() == null) {
             sputnikProperties.setPassword(SecurityUtils.getRandomPassword());
-            log.info("Using generated password: {}", sputnikProperties.getPassword());
+            log.warn("Using generated password: {}", sputnikProperties.getPassword());
         }
     }
 
@@ -62,7 +64,7 @@ public class Launcher implements ApplicationRunner {
         Map<String, Object> map = configurationPropertiesReportEndpoint.invoke();
         String prefix = MapUtils.getPath(map, "sputnikProperties.prefix");
         Map<Object, Object> properties = MapUtils.getPath(map, "sputnikProperties.properties");
-        for(Map.Entry e : properties.entrySet()) {
+        for (Map.Entry e : properties.entrySet()) {
             if (!"password".equals(e.getKey())) {
                 log.info(prefix + "." + e.getKey() + " = " + e.getValue());
             }

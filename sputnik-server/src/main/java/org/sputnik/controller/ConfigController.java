@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.sputnik.config.SputnikProperties;
 import org.sputnik.controller.dto.DataSourceDTO;
+import org.sputnik.dao.Repository;
 import org.sputnik.model.config.DataProfile;
 import org.sputnik.model.config.DataSource;
 import org.sputnik.service.CollectorService;
-import org.sputnik.service.ConfigService;
 import org.sputnik.util.MapUtils;
 import org.sputnik.util.NameUtils;
 import org.sputnik.util.SecurityUtils;
@@ -28,7 +28,9 @@ import java.util.stream.Collectors;
 public class ConfigController {
 
     @Autowired
-    ConfigService configService;
+    Repository<DataSource> dataSourceRepository;
+    @Autowired
+    Repository<DataProfile> dataProfileRepository;
     @Autowired
     SputnikProperties sputnikProperties;
     @Autowired
@@ -40,17 +42,26 @@ public class ConfigController {
 
     @RequestMapping("/dataProfiles")
     public Collection<DataProfile> getDataProfiles() {
-        return configService.getDataProfiles();
+        return dataProfileRepository.findAll();
     }
 
-    @RequestMapping("/dataProfiles/{name}")
-    public DataProfile getDataProfile(@PathVariable("name") String name) {
-        return configService.getDataProfile(name);
+    @RequestMapping(value = "/dataProfiles", method = RequestMethod.POST)
+    public void saveDataProfile(@RequestBody DataProfile dataProfile) {
+        SecurityUtils.getUser(request);
+        NameUtils.validateIdentifier(dataProfile.getName(), "name");
+        dataProfileRepository.save(dataProfile);
     }
+
+    @RequestMapping(value = "/dataProfiles/{id}", method = RequestMethod.DELETE)
+    public void deleteDataProfile(@PathVariable("id") String id) {
+        SecurityUtils.getUser(request);
+        dataProfileRepository.delete(id);
+    }
+
 
     @RequestMapping("/dataSources")
     public Collection<DataSourceDTO> getDataSources() {
-        Collection<DataSource> sources = configService.getDataSources();
+        Collection<DataSource> sources = dataSourceRepository.findAll();
         return sources.stream().map(this::convertDataSource).collect(Collectors.toList());
     }
 
@@ -61,28 +72,17 @@ public class ConfigController {
     }
 
     @RequestMapping(value = "/dataSources", method = RequestMethod.POST)
-    public Map createDataSource(@RequestBody DataSource dataSource) {
+    public Map saveDataSource(@RequestBody DataSource dataSource) {
         SecurityUtils.getUser(request);
-        if (dataSource.getId() != null) {
-            throw new IllegalArgumentException("id is not null");
-        }
         validateDataSource(dataSource);
-        configService.saveDataSource(dataSource);
+        dataSourceRepository.save(dataSource);
         return MapUtils.map("id", dataSource.getId());
-    }
-
-    @RequestMapping(value = "/dataSources/{id}", method = RequestMethod.PUT)
-    public void updateDataSource(@RequestBody DataSource dataSource, @PathVariable("id") String id) {
-        SecurityUtils.getUser(request);
-        validateDataSource(dataSource);
-        dataSource.setId(id);
-        configService.saveDataSource(dataSource);
     }
 
     @RequestMapping(value = "/dataSources/{id}", method = RequestMethod.DELETE)
     public void deleteDataSource(@PathVariable("id") String id) {
         SecurityUtils.getUser(request);
-        configService.deleteDataSource(id);
+        dataSourceRepository.delete(id);
     }
 
     private void validateDataSource(@RequestBody DataSource dataSource) {
