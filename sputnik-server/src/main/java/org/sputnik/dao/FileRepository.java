@@ -100,7 +100,7 @@ public abstract class FileRepository<T extends Identifiable> implements Initiali
                     object.setName(file.getName());
                 }
                 afterRead(object);
-                map.put(object.getName(), object);
+                map.put(object.getId(), object);
             } else {
                 readDirectory(new File(parent, file.getName()), map);
             }
