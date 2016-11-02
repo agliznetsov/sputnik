@@ -205,10 +205,10 @@ angular.module('sputnik').controller('HomeController', function ($scope, $routeP
                 name: key,
                 sources: map[key]
             };
-            _.orderBy(host.sources, ['name']);
+            host.sources = _.orderBy(host.sources, ['name']);
             $scope.model.hosts.push(host);
         }
-        _.orderBy($scope.model.hosts, ['name']);
+        $scope.model.hosts = _.orderBy($scope.model.hosts, ['name']);
         if ($scope.model.hostName) {
             $scope.model.host = _.find($scope.model.hosts, ['name', $scope.model.hostName]);
         } else if ($scope.model.hosts.length) {

@@ -132,12 +132,11 @@ case "$ACTION" in
       fi
       kill "$PID" 2>/dev/null
 
-      TIMEOUT=30
+      TIMEOUT=5
       while running $SPUTNIK_PID; do
         if (( TIMEOUT-- == 0 )); then
           kill -KILL "$PID" 2>/dev/null
         fi
-
         sleep 1
       done
 
