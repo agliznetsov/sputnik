@@ -54,12 +54,14 @@ public abstract class FileRepository<T extends Identifiable> implements Initiali
         }
         write(item);
         getItems().put(item.getId(), item);
+        afterWrite(item);
     }
 
     @Override
     @SneakyThrows
     public void delete(String id) {
         T item = getOne(id);
+        beforeDelete(item);
         File path = getPath(item);
         if (!path.delete()) {
             throw new IOException("Failed to delete " + path);
@@ -80,6 +82,12 @@ public abstract class FileRepository<T extends Identifiable> implements Initiali
     }
 
     protected void beforeWrite(T item) {
+    }
+
+    protected void afterWrite(T item) {
+    }
+
+    protected void beforeDelete(T item) {
     }
 
     private Map<String, T> readAll() {

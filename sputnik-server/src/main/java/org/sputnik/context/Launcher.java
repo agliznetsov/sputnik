@@ -1,7 +1,5 @@
 package org.sputnik.context;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -16,8 +14,6 @@ import org.sputnik.service.DBService;
 import org.sputnik.util.MapUtils;
 import org.sputnik.util.SecurityUtils;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Map;
 
 @Slf4j
@@ -41,14 +37,6 @@ public class Launcher implements ApplicationRunner {
         log.info("Launching sputnik");
         checkPassword();
         printConfiguration();
-        for (DataSource dataSource : dataSourceRepository.findAll()) {
-            File dataFile = dbService.getDataFile(dataSource);
-            if (dataFile.exists()) {
-                dbService.checkDB(dataFile, dataSource);
-            } else {
-                dbService.createDB(dataFile, dataSource);
-            }
-        }
         taskScheduler.scheduleAtFixedRate(() -> collectorService.collect(), sputnikProperties.getDataRate() * 1_000);
     }
 

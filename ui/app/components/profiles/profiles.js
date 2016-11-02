@@ -21,6 +21,7 @@ angular.module('sputnik').controller('ProfilesController', function ($scope, htt
 
     $scope.$on("cancel", function () {
        $scope.item = undefined;
+        $scope.refresh();
     });
 
     $scope.$on("save", function () {

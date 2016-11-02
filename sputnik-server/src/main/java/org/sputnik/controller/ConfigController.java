@@ -88,6 +88,7 @@ public class ConfigController {
     private void validateDataSource(@RequestBody DataSource dataSource) {
         NameUtils.validateIdentifier(dataSource.getName(), "name");
         NameUtils.validateIdentifier(dataSource.getGroupName(), "groupName");
+        NameUtils.validateIdentifier(dataSource.getDataProfileName(), "dataProfileName");
     }
 
     @RequestMapping("/properties")

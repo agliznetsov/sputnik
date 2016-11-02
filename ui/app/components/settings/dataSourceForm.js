@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('sputnik').controller('DataSourceFormController', function ($scope, $uibModalInstance, model, dataProfiles, groupNames, httpUtils) {
+angular.module('sputnik').controller('DataSourceFormController', function ($scope, $uibModalInstance, model, dataProfiles, groupNames, httpUtils, modal) {
 
     function init() {
         $scope.model = angular.copy(model);
@@ -28,14 +28,13 @@ angular.module('sputnik').controller('DataSourceFormController', function ($scop
     };
 
     $scope.clickRemove = function () {
-        var yes = confirm("Are you sure you want to remove this data source?");
-        if (yes) {
+        modal.confirm("Are you sure you want to remove this data source?").then(function () {
             httpUtils.delete("/dataSources/" + $scope.model.id).then(function () {
                 $uibModalInstance.close();
-            }, function (error) {
-                $scope.error(error);
+            }, function (err) {
+                $scope.error(err);
             });
-        }
+        });
     };
 
     $scope.error = function (response) {

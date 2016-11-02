@@ -1,0 +1,20 @@
+<form name="form">
+    <div class="modal-header">
+        <h4 class="modal-title">{{options.title}}</h4>
+    </div>
+    <div class="modal-body">
+        <div>
+            <i ng-if="options.icon" class="fa fa-2x" data-ng-class="options.icon"></i>
+            <span>{{options.message}}</span>
+        </div>
+        <div ng-if="options.input">
+            <input class="form-control" required data-ng-model="options.response" autofocus>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button ng-if="options.yesNo" class="btn btn-primary" ng-click="clickYes(form)">Yes</button>
+        <button ng-if="options.yesNo" class="btn btn-default" ng-click="clickNo(form)">No</button>
+        <button ng-if="!options.yesNo" class="btn btn-primary" ng-click="clickOk(form)">OK</button>
+        <button class="btn btn-default" ng-click="clickCancel()">Cancel</button>
+    </div>
+</form>

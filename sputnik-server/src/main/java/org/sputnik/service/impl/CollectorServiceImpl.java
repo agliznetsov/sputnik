@@ -88,6 +88,8 @@ public class CollectorServiceImpl implements CollectorService {
         File dataFile = dbService.getDataFile(dataSource);
         if (!dataFile.exists()) {
             dbService.createDB(dataFile, dataSource);
+        } else {
+            dbService.checkDB(dataFile, dataSource);
         }
         Map<Object, Object> data = collectData(dataSource, status);
 //        dumpData(data);
@@ -139,7 +141,7 @@ public class CollectorServiceImpl implements CollectorService {
                             }
                         }
                     } else {
-                        log.warn("Ignoring missing dataSource {} in {}. Restart sputnik to update existing DBs.", serie.getName(), rrdDb.getPath());
+                        log.error("Ignoring missing dataSource {} in {}.", serie.getName(), rrdDb.getPath());
                     }
                 }
             }

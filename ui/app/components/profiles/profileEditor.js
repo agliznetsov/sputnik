@@ -8,18 +8,29 @@ angular.module('sputnik').directive('profileEditor', function () {
         scope: {
             model: '='
         },
-        controller: function ($scope, httpUtils, notificationService) {
+        controller: function ($scope, httpUtils, notificationService, modal) {
 
             $scope.cancel = function () {
                 $scope.$emit("cancel");
             };
 
             $scope.save = function () {
-                $scope.errorMessage = undefined;
-                httpUtils.post("/dataProfiles/", $scope.model).then(function () {
-                    $scope.$emit("save");
-                }, function (err) {
-                    notificationService.error(err);
+                modal.confirm("Are you sure you want to save this data profile?").then(function () {
+                    httpUtils.post("/dataProfiles/", $scope.model).then(function () {
+                        $scope.$emit("save");
+                    }, function (err) {
+                        notificationService.error(err);
+                    });
+                });
+            };
+
+            $scope.delete = function () {
+                modal.confirm("Are you sure you want to delete this data profile?").then(function () {
+                    httpUtils.delete("/dataProfiles/" + $scope.model.id).then(function () {
+                        $scope.$emit("cancel");
+                    }, function (err) {
+                        notificationService.error(err);
+                    });
                 });
             };
 
