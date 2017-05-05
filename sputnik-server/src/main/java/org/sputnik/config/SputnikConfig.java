@@ -17,6 +17,9 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.sputnik.context.Launcher;
 import org.sputnik.dao.DataProfileRepository;
 import org.sputnik.dao.DataSourceRepository;
@@ -30,6 +33,16 @@ public class SputnikConfig {
     public static final String PROFILES_DIR = "config/profiles";
     public static final String SOURCES_DIR = "config/sources";
     public static final String DATA_DIR = "data";
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurerAdapter() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**").allowedOrigins("*").allowedMethods("GET", "POST", "PUT");
+            }
+        };
+    }
 
     @Bean
     public ObjectMapper objectMapper() {
