@@ -1,0 +1,38 @@
+<div class="notification-wrapper">
+  <div *ngFor="let e of notificationsService.getNotifications()"
+       class="modal-content notification notification-animation">
+    <i class="close fa fa-lg fa-times-circle" (click)="notificationsService.removeNotification(e.id)"></i>
+    <span><i class="type-icon fa fa-lg" [ngClass]="e.type"></i>{{e.message}}</span>
+  </div>
+</div>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div>
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#"><img src="../assets/sputnik-logo.png"></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li [class.active]="isActive(menuItem.url)" *ngFor="let menuItem of menu" [class.hidden]="!isVisible(menuItem)">
+          <a [routerLink]="menuItem.url">
+            <i class="fa fa-lg" [ngClass]="menuItem.icon"></i>
+            <span class="li-text">{{menuItem.name}}</span>
+          </a>
+        </li>
+        <li *ngIf="!userService.getUser()">
+          <a routerLink="/signin">Sign in</a>
+        </li>
+        <li *ngIf="userService.getUser()">
+          <a href="" title="Sign out" (click)="userService.signout()">
+            <i class="fa fa-lg fa-power-off"></i>
+            <span class="li-text">{{userService.getUser()}}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<router-outlet></router-outlet>
+

@@ -1,0 +1,62 @@
+<div class="app-body settings">
+
+  <div class="well well-sm">
+    <div class="btn-group">
+      <button class="btn btn-sm" (click)="refresh()" title="Refresh"><i class="fa fa-refresh"></i></button>
+      <button class="btn btn-sm" (click)="addSource()" title="Add new data source"><i class="fa fa-plus"></i></button>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-sm" (click)="collect()" title="Force data collection"><i class="fa fa-gears"></i></button>
+    </div>
+    <div class="pull-right">
+      <label>Showing {{model.sources.length}} of {{model.total}}</label>
+    </div>
+  </div>
+
+  <table class="table table-striped table-bordered table-hover">
+    <thead>
+    <tr>
+      <th width="50px" style="text-align: center">
+        <label>Enabled</label>
+      </th>
+      <th>
+        <label>Group</label>
+        <input class="form-control input-sm" type="text" [ngModel]="model.filter.groupName" (keypress)="onKeyPress($event)"
+               uib-typeahead="group for group in model.groupNames | filter:$viewValue" typeahead-editable="false" typeahead-on-select="onFilterSelect()">
+      </th>
+      <th>
+        <label>Name</label>
+        <input class="form-control input-sm" type="text" [ngModel]="model.filter.name" (keypress)="onKeyPress($event)">
+      </th>
+      <th>Description</th>
+      <th>
+        <label>Profile</label>
+        <input class="form-control input-sm" type="text" [ngModel]="model.filter.profile" (keypress)="onKeyPress($event)"
+               uib-typeahead="profile for profile in model.dataProfiles | filter:$viewValue" typeahead-editable="false" typeahead-on-select="onFilterSelect()">
+      </th>
+      <th>
+        <label>URL</label>
+        <input class="form-control input-sm" type="text" [ngModel]="model.filter.url" (keypress)="onKeyPress($event)">
+      </th>
+      <th>Status</th>
+      <th>Ping, ms</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let source of model.sources" (click)="editSource(source)">
+      <td align="middle"><i class="fa" [ngClass]="{'fa-square-o': !source.enabled, 'fa-check-square-o': source.enabled}"></i></td>
+      <td>{{source.groupName}}</td>
+      <td>{{source.name}}</td>
+      <td>{{source.description}}</td>
+      <td>{{source.dataProfileName}}</td>
+      <td>{{source.url}}</td>
+      <td>
+        <i class="fa" [ngClass]="getIcon(source)"></i>
+        {{getTitle(source)}}
+      </td>
+      <td>{{source.status?.ping}}</td>
+    </tr>
+    </tbody>
+  </table>
+
+</div>

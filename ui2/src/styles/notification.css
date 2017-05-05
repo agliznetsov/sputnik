@@ -1,0 +1,96 @@
+/*Notifications*/
+
+.notification-wrapper {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    width: 315px;
+    overflow: hidden;
+    padding-bottom: 15px;
+    padding-right: 15px;
+}
+
+.notification-wrapper .notification {
+    min-height: 100px;
+    width: 300px;
+    margin-top: 15px;
+    position: relative;
+}
+
+.notification-wrapper .notification span {
+    width: 100%;
+    top: 50%;
+    position: absolute;
+    transform: translateY(-50%);
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.notification-wrapper .notification .close {
+    position: absolute;
+    z-index: 100;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
+.notification-wrapper .notification .type-icon {
+    margin-right: 15px;
+}
+
+.notification-wrapper .notification .info:before {
+    color: #2da0dc;
+    content: "\f05a";
+}
+
+.notification-wrapper .notification .error:before {
+    color: #d72d2d;
+    content: "\f06a";
+}
+
+.notification-wrapper .notification .warning:before {
+    color: #f07800;
+    content: "\f071";
+}
+
+.notification-wrapper .notification .ok:before {
+    color: #46af14;
+    content: "\f058";
+}
+
+.notification-animation.ng-enter,
+.notification-animation.ng-leave,
+.notification-animation.ng-move {
+    -webkit-transition: 0.5s ease all;
+    transition: 0.5s ease all;
+    position: relative;
+}
+
+.notification-animation.ng-enter {
+    right: -100%;
+    opacity: 0;
+}
+
+.notification-animation.ng-enter.ng-enter-active {
+    right: 0;
+    opacity: 1;
+}
+
+.notification-animation.ng-leave {
+    right: 0;
+    opacity: 1;
+}
+
+.notification-animation.ng-leave.ng-leave-active {
+    right: -100%;
+    opacity: 0;
+}
+
+.notification-animation.ng-move {
+    opacity: 0.5;
+}
+
+.notification-animation.ng-move.ng-move-active {
+    opacity: 1;
+}
