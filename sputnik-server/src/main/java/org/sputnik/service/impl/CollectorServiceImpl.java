@@ -49,6 +49,7 @@ public class CollectorServiceImpl implements CollectorService {
 
     @Override
     public synchronized void collect() {
+        log.debug("collect start");
         long start = System.currentTimeMillis();
         Collection<DataSource> dataSources = dataSourceRepository.findAll();
         long size = dataSources.stream().filter(DataSource::isEnabled).count();
@@ -76,6 +77,7 @@ public class CollectorServiceImpl implements CollectorService {
                 });
             }
         }
+        log.debug("collect end");
     }
 
     @Override
