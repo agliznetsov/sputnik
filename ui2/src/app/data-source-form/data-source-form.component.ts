@@ -7,9 +7,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DataSourceFormComponent implements OnInit {
 
+  public model = {};
+  public dataProfiles;
+  public groupNames;
+
   constructor() { }
 
   ngOnInit() {
+  // $scope.dataFormats = ['JSON', 'PROPERTIES'];
+  // $scope.dataProfiles = dataProfiles;
+  // $scope.groupNames = groupNames;
   }
 
 //   function init() {

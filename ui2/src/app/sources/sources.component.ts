@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {HttpService} from '../http.service';
 import * as _ from "lodash";
 import * as moment from 'moment';
@@ -11,6 +11,8 @@ import {DataSourceFormComponent} from "../data-source-form/data-source-form.comp
   styleUrls: ['./sources.component.css']
 })
 export class SourcesComponent implements OnInit {
+
+  @ViewChild('lgModal') lgModal;
 
   public model = {
     sources: [],
@@ -84,6 +86,7 @@ export class SourcesComponent implements OnInit {
     // }).result.then(function () {
     //   this.refresh();
     // });
+    this.lgModal.show();
   };
 
   public collect() {

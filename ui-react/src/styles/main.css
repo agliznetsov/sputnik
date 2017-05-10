@@ -1,0 +1,77 @@
+.navbar-brand {
+    padding: 0;
+}
+
+.navbar {
+    padding-right: 20px;
+}
+
+.center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.relative {
+    position: relative;
+}
+
+.hidden{
+  display: none !important;
+}
+
+.loading-cloak {
+    position: fixed;
+    z-index: 999;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.icon-label {
+    margin-left: 10px;
+}
+
+.app-body {
+    margin-top: 51px;
+}
+
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched {
+    border: 1px solid red;
+}
+
+.btn-link {
+    cursor: pointer;
+}
+
+.signin-form {
+    width: 300px;
+}
+
+.signin-form button {
+    width: 100%;
+}
+
+.red {
+    color: #ee0000;
+}
+
+.black {
+    color: black;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.li-text {
+    margin-left: 5px;
+}
+
+.text-align-center {
+    text-align: center;
+}

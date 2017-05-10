@@ -2,6 +2,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
+import { ModalModule } from 'ngx-bootstrap';
 
 import {AppComponent} from './app.component';
 import {AboutComponent} from './about/about.component';
@@ -18,7 +19,8 @@ import {DataSourceFormComponent } from './data-source-form/data-source-form.comp
     AppRoutingModule,
     BrowserModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    ModalModule.forRoot()
   ],
   declarations: [
     AppComponent,
